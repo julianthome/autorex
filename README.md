@@ -59,9 +59,9 @@ The following code snippet shows how the transformation API can be used:
 ```java
 String s = "hello my name is Alice";
 Automaton a = new RegExp(s).toAutomaton();
+Automaton ccas = Autorex.getCamelCaseAutomaton(a);
 Automaton substr = Autorex.getSubstringAutomaton(a);
 Automaton sfx = Autorex.getSuffixAutomaton(a);
-Automaton ccas = Autorex.getCamelCaseAutomaton(a);
 
 ```
 
