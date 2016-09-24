@@ -1,6 +1,6 @@
 # autorex
 
-With `autorex`, you can convert an automaton back into its
+With `autorex`, one can convert an automaton back into its
 regular expression representation. The translation is
 based on the well-known state-elimination algorithm. One
 can find a very neat description of this algorithm
@@ -9,10 +9,20 @@ Introduction to the Theory of Computation.
 Vol. 2. Boston: Thomson Course Technology, 2006, Chapter
 1 (Starting from page 70)*. The implementation is based on the
 [dk.brics](http://www.brics.dk/automaton/) automaton package.
+ 
+With `dk.brics`, one can apply automaton operations such as
+concatenation, union, intersection, *etc.* on *input automata* to
+derive an *output automaton*. However, the automaton representation used by `dk.brics`
+might not be compatible with the one of another API. If you would like to 
+use the result of a `dk.brics` computation together with
+different API that is using another automaton representation than
+`dk.brics`, you can use `autorex` for the
+purpose of translating the *output automaton* into a simple regular expression string,
+the most generic representation of a regular expression,
+that can then be used this across different APIs.
 
 # Status
 [![Build Status](https://travis-ci.org/julianthome/autorex.svg?branch=master)](https://travis-ci.org/julianthome/autorex.svg?branch=master)  [![codecov](https://codecov.io/gh/julianthome/autorex/branch/master/graph/badge.svg)](https://codecov.io/gh/julianthome/autorex)  
-
 
 # Usage
 

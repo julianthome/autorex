@@ -32,10 +32,20 @@ public class TestStateElimination {
     final static Logger logger = LoggerFactory.getLogger(TestStateElimination.class);
 
 
+    private enum Op {
+        CONCAT,
+        UNION,
+        ISECT
+    };
+
     private boolean compareRexp(String rexp) {
         logger.debug("TEST " + rexp);
         RegExp r0 = new RegExp(rexp);
         Automaton a0 = r0.toAutomaton();
+        return compareRexpAutomaton(a0);
+    }
+
+    private boolean compareRexpAutomaton(Automaton a0) {
         logger.debug("old Automaton:" + a0.toDot());
         logger.debug("is det" + a0.isDeterministic());
         String s0 = Autorex.getRegexFromAutomaton(a0);
@@ -44,6 +54,25 @@ public class TestStateElimination {
         Automaton a0new = r0new.toAutomaton();
         logger.debug("new Automaton:" + a0new.toDot());
         return a0new.equals(a0);
+    }
+
+    private boolean modAutomata(String rexp1, String rexp2, Op op) {
+        Automaton a = new RegExp(rexp1).toAutomaton();
+        Automaton b = new RegExp(rexp2).toAutomaton();
+        Automaton c = null;
+        switch(op) {
+            case CONCAT:
+                c = a.concatenate(b);
+                break;
+            case UNION:
+                c = a.union(b);
+                break;
+            case ISECT:
+                c = a.intersection(b);
+                break;
+        }
+        Assert.assertNotNull(c);
+        return compareRexpAutomaton(c);
     }
 
     @Test
@@ -63,6 +92,16 @@ public class TestStateElimination {
         Assert.assertTrue(compareRexp(".*") == true);
         Assert.assertTrue(compareRexp("[13d]d*") == true);
         Assert.assertTrue(compareRexp("[a-z]{1,3}test[0-9]+") == true);
+    }
+
+    @Test
+    public void testgetRegexpForModAutomaton() {
+        Assert.assertTrue(modAutomata("aa+", "aa+", Op.CONCAT));
+        Assert.assertTrue(modAutomata("aa+", "aa+", Op.UNION));
+        Assert.assertTrue(modAutomata("aa+", "aa+", Op.ISECT));
+        Assert.assertTrue(modAutomata("[a-z]{1,3}test[0-9]+", "abcabtest", Op.CONCAT));
+        Assert.assertTrue(modAutomata("[a-z]{1,3}test[0-9]+", "abcabtest", Op.UNION));
+        Assert.assertTrue(modAutomata("[a-z]{1,3}test[0-9]+", "abctest[0-6]{2,3}", Op.ISECT));
     }
 
     @Test
