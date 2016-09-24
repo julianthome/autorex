@@ -1,4 +1,5 @@
 # autorex
+
 With `autorex`, you can convert an automaton back into its
 regular expression representation. The translation is
 based on the well-known state-elimination algorithm. One
@@ -54,7 +55,8 @@ Automaton ccas = Autorex.getCamelCaseAutomaton(a);
 
 ```
 
-For more examples, please have a look at the provided test cases.
+For more examples, please have a look at the provided test cases or at the javadoc
+documentation of the class `Autorex`.
 
 # Licence
 Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence. You may obtain a copy of the Licence at: https://joinup.ec.europa.eu/sites/default/files/eupl1.1.-licence-en_0.pdf
