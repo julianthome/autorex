@@ -4,22 +4,22 @@ With `autorex`, one can convert an automaton back into its
 regular expression representation. The translation is
 based on the well-known state-elimination algorithm. One
 can find a very neat description of this algorithm
-in the textbook *Sipser, Michael. 
-Introduction to the Theory of Computation. 
+in the textbook *Sipser, Michael.
+Introduction to the Theory of Computation.
 Vol. 2. Boston: Thomson Course Technology, 2006, Chapter
 1 (Starting from page 70)*. The implementation is based on the
 [dk.brics](http://www.brics.dk/automaton/) automaton package.
- 
+
 With `dk.brics`, one can apply automaton operations such as
 concatenation, union, intersection, *etc.* on *input automata* to
 derive an *output automaton*. However, the automaton representation used by `dk.brics`
-might not be compatible with the one of another API. If you would like to 
+might not be compatible with the one of another API. If you would like to
 use the result of a `dk.brics` computation together with
 different API that is using another automaton representation than
 `dk.brics`, you can use `autorex` for the
 purpose of translating the *output automaton* into a simple regular expression string,
 the most generic representation of a regular expression,
-that can then be used this across different APIs.
+that can then be used across different APIs.
 
 # Status
 [![Build Status](https://travis-ci.org/julianthome/autorex.svg?branch=master)](https://travis-ci.org/julianthome/autorex.svg?branch=master)  [![codecov](https://codecov.io/gh/julianthome/autorex/branch/master/graph/badge.svg)](https://codecov.io/gh/julianthome/autorex)  
@@ -28,7 +28,7 @@ that can then be used this across different APIs.
 
 ## State Elimination
 
-`autorex` has a very simple API for state elimination 
+`autorex` has a very simple API for state elimination
 provided by the class `Autorex`:
 
 ```java
@@ -37,7 +37,7 @@ String regex = Autorex.getRegexFromAutomaton(a);
 System.out.println(regex.toString());
 assert(new RegExp(regex).toAutomaton().equals(a));
 ```
-This example would yield the following output which is equivalent to 
+This example would yield the following output which is equivalent to
 `[a-z]{1,3}test[0-9]+`:
 
 ```bash
