@@ -27,7 +27,7 @@ import java.util.*;
 
 public class AutomatonTrans extends Automaton {
 
-    final static Logger logger = LoggerFactory.getLogger(AutomatonTrans.class);
+    final static Logger LOGGER = LoggerFactory.getLogger(AutomatonTrans.class);
 
     public static enum Kind {
 
@@ -79,14 +79,16 @@ public class AutomatonTrans extends Automaton {
 
     }
 
-    private Kind kind;
-    private Map<State, Integer> statenumber = null;
-    private Map<Integer, State> numberstate = null;
-    private Map<Integer, HashSet<Integer>> adjacency = null;
+    private Kind kind = Kind.NORMAL;
 
-    HashMap<State, HashSet<FullTransition>> incoming = null;
-    HashMap<State, HashSet<FullTransition>> outgoing = null;
-    HashSet<FullTransition> transitions = null;
+    protected Set<State> states = new HashSet<>();
+    protected Map<State, Integer> statenumber = new HashMap<>();
+    protected Map<Integer, State> numberstate = new HashMap<>();
+    protected Map<Integer, HashSet<Integer>> adjacency = new HashMap<>();
+
+    HashMap<State, HashSet<FullTransition>> incoming = new HashMap<>();
+    HashMap<State, HashSet<FullTransition>> outgoing = new HashMap<>();
+    HashSet<FullTransition> transitions = new HashSet<>();
 
     private int stateId;
 
@@ -94,21 +96,14 @@ public class AutomatonTrans extends Automaton {
 
     public AutomatonTrans() {
         super();
-        this.statenumber = new HashMap<State,Integer>();
-        this.numberstate = new HashMap<Integer,State>();
-        this.adjacency = new HashMap<Integer, HashSet<Integer>>();
-        this.stateId = 0;
-        this.incoming = new HashMap<>();
-        this.outgoing = new HashMap<>();
-        this.kind = Kind.NORMAL;
-        this.transitions = new HashSet<FullTransition>();
+        stateId = 0;
     }
 
     public AutomatonTrans(Automaton a) {
         this();
         this.setInitialState(a.clone().getInitialState());
-        finalize();
         prepare();
+        finalize();
     }
 
     public AutomatonTrans(String rexp) {
@@ -133,15 +128,29 @@ public class AutomatonTrans extends Automaton {
         // init state has no incomings
 
         // get all transitions
-        for (State s : this.getStates()) {
+        for (State s : super.getStates()) {
             for (Transition t : s.getTransitions()) {
                 FullTransition ft = new FullTransition(s, t, t.getDest());
-                addToIncoming(ft);
-                addToOutgoing(ft);
-                this.transitions.add(ft);
-                addToAdjacency(getNumberOfState(ft.getSourceState()), getNumberOfState(ft.getTargetState()));
+                addTransition(ft);
             }
         }
+    }
+
+    public void addTransitions(Collection<FullTransition> ft) {
+
+        for(FullTransition t : ft) {
+            addTransition(t);
+        }
+        dfsNumering(getInitialState());
+    }
+
+    public void addTransition(FullTransition ft) {
+        states.add(ft.getSourceState());
+        states.add(ft.getTargetState());
+        addToIncoming(ft);
+        addToOutgoing(ft);
+        transitions.add(ft);
+        addToAdjacency(getNumberOfState(ft.getSourceState()), getNumberOfState(ft.getTargetState()));
     }
 
 
@@ -154,14 +163,14 @@ public class AutomatonTrans extends Automaton {
 
     private void addToIncoming(FullTransition ft) {
         if (!incoming.containsKey(ft.getTargetState())) {
-            incoming.put(ft.getTargetState(), new HashSet<FullTransition>());
+            incoming.put(ft.getTargetState(), new HashSet<>());
         }
         incoming.get(ft.getTargetState()).add(ft);
     }
 
     private void addToOutgoing(FullTransition ft) {
         if (!outgoing.containsKey(ft.getSourceState())) {
-            outgoing.put(ft.getSourceState(), new HashSet<FullTransition>());
+            outgoing.put(ft.getSourceState(), new HashSet<>());
         }
         outgoing.get(ft.getSourceState()).add(ft);
     }
@@ -229,18 +238,21 @@ public class AutomatonTrans extends Automaton {
         setAccepting();
         setEpsilon();
         this.kind = Kind.SUBSTRING;
-        this.finalize();
         this.prepare();
+        this.finalize();
     }
 
     protected void convertToSuffixAutomaton() {
         setEpsilon();
         this.kind = Kind.SUFFIX;
-        this.finalize();
         this.prepare();
+        this.finalize();
     }
 
     public void finalize() {
+        stateId = 0;
+        statenumber.clear();
+        numberstate.clear();
         dfsNumering(this.getInitialState());
     }
 
@@ -252,8 +264,8 @@ public class AutomatonTrans extends Automaton {
         this.stateId++;
         this.statenumber.put(s, this.stateId);
         this.numberstate.put(this.stateId,s);
-        for (Transition t : s.getTransitions()) {
-            dfsNumering(t.getDest());
+        for (FullTransition t : outgoing.get(s)) {
+            dfsNumering(t.getTargetState());
         }
     }
 
@@ -276,17 +288,25 @@ public class AutomatonTrans extends Automaton {
 
     }
 
-    void appendDot(StringBuilder sbuilder, Transition t) {
-        sbuilder.append(" -> ").append(this.statenumber.get(t.getDest())).append(" [label=\"");
-        appendCharString(t.getMin(), sbuilder);
-        if (t.getMin() != t.getMax()) {
-            sbuilder.append("-");
-            appendCharString(t.getMax(), sbuilder);
+    void appendDot(StringBuilder sbuilder, FullTransition ft) {
+        sbuilder.append(" -> ").append(
+                "n" + statenumber.get(ft.getTargetState())).append(" [label=\"");
+
+        Transition t = ft.getLastTran();
+        if(t != null) {
+            appendCharString(t.getMin(), sbuilder);
+            if (t.getMin() != t.getMax()) {
+                sbuilder.append("-");
+                appendCharString(t.getMax(), sbuilder);
+            }
         }
+        sbuilder.append("\"");
 
-        sbuilder.append("\"]\n");
+        if(ft.isEpsilon()){
+            sbuilder.append(",color=red");
+        }
+        sbuilder.append("];\n");
     }
-
 
     @Override
     public AutomatonTrans clone() {
@@ -308,7 +328,7 @@ public class AutomatonTrans extends Automaton {
             if (s.equals(this.getInitialState())) {
                 a.setInitialState(p);
                 assert (a.getInitialState() != null);
-                //logger.info("INITIAL STATE");
+                //LOGGER.info("INITIAL STATE");
             }
 
             for (Transition t : s.getTransitions()) {
@@ -329,31 +349,21 @@ public class AutomatonTrans extends Automaton {
 
         StringBuilder sbuilder = new StringBuilder("digraph Automaton {\n");
         sbuilder.append("  rankdir = LR;\n");
-        Set states = this.getStates();
 
-        Iterator stateIter = states.iterator();
-
-        while (stateIter.hasNext()) {
-            State state = (State) stateIter.next();
-            sbuilder.append("  ").append(this.statenumber.get(state));
+        for(State state : states){
+            sbuilder.append("  ").append("n" + this.statenumber.get(state));
             if (state.isAccept()) {
                 sbuilder.append(" [shape=doublecircle,label=\"" + this.statenumber.get(state) + "\"];\n");
             } else {
                 sbuilder.append(" [shape=circle,label=\"" + this.statenumber.get(state) + "\"];\n");
             }
 
-            if (state == this.getInitialState()) {
-                sbuilder.append("  initial [shape=plaintext,label=\"" + this.statenumber.get(state) + "\"];\n");
-                sbuilder.append("  initial -> ").append(this.statenumber.get(state)).append("\n");
-            }
+        }
 
-            Iterator transIter = state.getTransitions().iterator();
-
-            while (transIter.hasNext()) {
-                Transition trans = (Transition) transIter.next();
-                sbuilder.append("  ").append(this.statenumber.get(state));
-                appendDot(sbuilder, trans);
-            }
+        for(FullTransition ft : transitions){
+            sbuilder.append("  n" + this.statenumber.get(ft.getSourceState
+                    ()));
+            appendDot(sbuilder, ft);
         }
 
         return sbuilder.append("}\n").toString();

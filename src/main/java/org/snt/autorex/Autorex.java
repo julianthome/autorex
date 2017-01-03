@@ -20,8 +20,18 @@
 package org.snt.autorex;
 
 import dk.brics.automaton.Automaton;
+import dk.brics.automaton.State;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 public class Autorex {
+
+    final static Logger LOGGER = LoggerFactory.getLogger(AutomatonTrans.class);
 
     /**
      * returns the regular expression that represents the semantics
@@ -68,6 +78,62 @@ public class Autorex {
         assert(sfx != null);
         sfx.convertToSuffixAutomaton();
         return sfx;
+    }
+
+
+    public static Set<List<FullTransition>> detectBridges(Automaton a) {
+
+        LOGGER.debug("detect bridges");
+
+        Set<FullTransition> bridges = BridgeDetector.INSTANCE.detect(a);
+        Set<FullTransition> grouped = new HashSet<>();
+
+        AutomatonTrans g = new AutomatonTrans(a);
+
+        Set<List<FullTransition>> ret = new HashSet<>();
+
+        for(FullTransition t : bridges) {
+
+            State src = t.getSourceState();
+            State dest = t.getTargetState();
+
+            //if(grouped.contains(t))
+            //    continue;
+
+            LinkedList<FullTransition> group = new LinkedList<>();
+            group.add(t);
+
+
+            while(g.incoming.containsKey(src) &&
+                    g.incoming.get(src).size() == 1) {
+                FullTransition trans = g.incoming.get(src).iterator().next();
+
+                LOGGER.debug("next in {}", trans.getLabel());
+                grouped.add(trans);
+                group.addFirst(g.incoming.get(src).iterator().next());
+                src = g.incoming.get(src).iterator().next().getSourceState();
+            }
+
+            /**while(g.outgoing.containsKey(dest) &&
+                    g.outgoing.get(dest).size() == 1) {
+                FullTransition trans = g.outgoing.get(dest).iterator().next();
+
+                LOGGER.debug("trans {}", trans.getLabel());
+                if(trans.isEpsilon()) {
+                    group.addLast(g.outgoing.get(dest).iterator().next());
+                    break;
+                }
+                LOGGER.debug("next out {}", trans.getLabel());
+
+                grouped.add(trans);
+                group.addLast(g.outgoing.get(dest).iterator().next());
+                dest = g.outgoing.get(dest).iterator().next().getTargetState();
+            }**/
+
+            ret.add(group);
+        }
+
+        return ret;
     }
 
 

@@ -26,10 +26,13 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+import java.util.Set;
+
 
 public class TestAutorex {
 
-    final static Logger logger = LoggerFactory.getLogger(TestAutorex.class);
+    final static Logger LOGGER = LoggerFactory.getLogger(TestAutorex.class);
 
 
     @Test
@@ -70,6 +73,33 @@ public class TestAutorex {
 
         Assert.assertTrue(ccas.run(s.toUpperCase()));
 
+    }
+
+    @Test
+    public void testConcreteSubstring() {
+        String s = "a+ hello .* s+";
+
+        AutomatonTrans at = new AutomatonTrans(s);
+
+        at.convertToSubstringAutomaton();
+        LOGGER.info(at.toDot());
+
+    }
+
+    @Test
+    public void testBridgeDetector() {
+        String s = "a .* hello .*k";
+
+        Automaton a = new RegExp(s).toAutomaton();
+        Set<List<FullTransition>> ret = Autorex.detectBridges(a);
+
+        for(List<FullTransition> l : ret) {
+            String st = "";
+            for(FullTransition t : l) {
+                st += t.getLabel();
+            }
+            LOGGER.debug("STR {}", st);
+        }
     }
 
 }
