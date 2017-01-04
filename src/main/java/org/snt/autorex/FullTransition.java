@@ -35,7 +35,6 @@ public class FullTransition {
     private String carry = "";
 
     public String getCarry() {
-        assert isConcrete();
         if(carry.length() > 0)
             return carry;
         else
