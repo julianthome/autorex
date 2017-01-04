@@ -25,17 +25,36 @@ import dk.brics.automaton.Transition;
 import java.util.HashSet;
 import java.util.Set;
 
-public class FullTransition implements Comparable<FullTransition> {
+public class FullTransition {
 
     private State src;
     private State dest;
     private Set<Transition> trans;
     private Transition recentlyAdded;
     private String label = "";
+    private String carry = "";
+
+    public String getCarry() {
+        assert isConcrete();
+        if(carry.length() > 0)
+            return carry;
+        else
+            return "" + getLastTran().getMax();
+    }
+
+    public void setCarry(String carry) {
+        this.carry = carry;
+    }
+
     private int tid;
     private boolean isEpsilon = false;
     private Kind kind;
 
+    public boolean isConcrete() {
+        return isEpsilon || carry.length() > 0 || getLastTran().getMin() ==
+                getLastTran()
+                .getMax();
+    }
 
     public enum Kind {
 
@@ -127,23 +146,6 @@ public class FullTransition implements Comparable<FullTransition> {
     }
 
 
-    @Override
-    public boolean equals(Object o) {
-
-        if(! (o instanceof FullTransition))
-            return false;
-
-        FullTransition fto = (FullTransition)o;
-
-        return this.getTargetState().equals(fto.getTargetState()) &&
-                this.getSourceState().equals(fto.getSourceState());
-    }
-
-    @Override
-    public int hashCode() {
-        return this.getSourceState().hashCode() + this.getTargetState().hashCode() + this.kind.hashCode();
-    }
-
     public void addTransition (Transition t) {
         this.trans.add(t);
         this.label = getTransitionLabel();
@@ -198,14 +200,6 @@ public class FullTransition implements Comparable<FullTransition> {
         sb.append("Dest:" + this.dest.toString() +"\n");
         sb.append("==================================\n");
         return sb.toString();
-    }
-
-    @Override
-    public int compareTo(FullTransition o) {
-        if(this.equals(o))
-            return 0;
-
-        else return this.tid;
     }
 
 

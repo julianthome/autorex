@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-public class AutomatonTrans extends Automaton {
+public class AutomatonTrans {
 
     final static Logger LOGGER = LoggerFactory.getLogger(AutomatonTrans.class);
 
@@ -81,10 +81,10 @@ public class AutomatonTrans extends Automaton {
 
     private Kind kind = Kind.NORMAL;
 
-    protected Set<State> states = new HashSet<>();
+    protected Automaton auto = null;
+    protected Set<State>  states = new HashSet<>();
     protected Map<State, Integer> statenumber = new HashMap<>();
-    protected Map<Integer, State> numberstate = new HashMap<>();
-    protected Map<Integer, HashSet<Integer>> adjacency = new HashMap<>();
+    protected State init = null;
 
     HashMap<State, HashSet<FullTransition>> incoming = new HashMap<>();
     HashMap<State, HashSet<FullTransition>> outgoing = new HashMap<>();
@@ -101,7 +101,8 @@ public class AutomatonTrans extends Automaton {
 
     public AutomatonTrans(Automaton a) {
         this();
-        this.setInitialState(a.clone().getInitialState());
+        this.auto = a.clone();
+        this.init = this.auto.getInitialState();
         prepare();
         finalize();
     }
@@ -111,13 +112,13 @@ public class AutomatonTrans extends Automaton {
     }
 
     private void set() {
-        for (State s : this.getStates()) {
+        for (State s : auto.getStates()) {
             s.setAccept(true);
         }
     }
 
     private void setAccepting() {
-        for (State s : this.getStates()) {
+        for (State s : auto.getStates()) {
             s.setAccept(true);
         }
     }
@@ -128,7 +129,7 @@ public class AutomatonTrans extends Automaton {
         // init state has no incomings
 
         // get all transitions
-        for (State s : super.getStates()) {
+        for (State s : auto.getStates()) {
             for (Transition t : s.getTransitions()) {
                 FullTransition ft = new FullTransition(s, t, t.getDest());
                 addTransition(ft);
@@ -141,7 +142,8 @@ public class AutomatonTrans extends Automaton {
         for(FullTransition t : ft) {
             addTransition(t);
         }
-        dfsNumering(getInitialState());
+        Set<State> visited = new HashSet<>();
+        dfsNumering(init, visited);
     }
 
     public void addTransition(FullTransition ft) {
@@ -150,16 +152,35 @@ public class AutomatonTrans extends Automaton {
         addToIncoming(ft);
         addToOutgoing(ft);
         transitions.add(ft);
-        addToAdjacency(getNumberOfState(ft.getSourceState()), getNumberOfState(ft.getTargetState()));
     }
 
+    public void delTransitions(Collection<FullTransition> ts) {
+        ts.forEach(t -> delTransition(t));
+    }
 
-    private void addToAdjacency(int src, int dest) {
-        if(!this.adjacency.containsKey(src)) {
-            this.adjacency.put(src,new HashSet<Integer>());
+    public void delTransition(FullTransition t) {
+        State target = t.getTargetState();
+        State source = t.getSourceState();
+        transitions.remove(t);
+        outgoing.get(source).remove(t);
+        incoming.get(target).remove(t);
+
+        if(outgoing.get(source).size() == 0){
+            outgoing.remove(source);
         }
-        this.adjacency.get(src).add(dest);
+        if(incoming.get(target).size() == 0){
+            incoming.remove(target);
+        }
+
     }
+
+    public void delState(State s) {
+        incoming.remove(s);
+        outgoing.remove(s);
+        statenumber.remove(s);
+        states.remove(s);
+    }
+
 
     private void addToIncoming(FullTransition ft) {
         if (!incoming.containsKey(ft.getTargetState())) {
@@ -177,23 +198,23 @@ public class AutomatonTrans extends Automaton {
 
     private void setEpsilon() {
 
-        boolean init = this.getInitialState().isAccept();
+        boolean binit = init.isAccept();
 
         Set<StatePair> spairs = new HashSet<StatePair>();
-        for (State s : this.getStates()) {
-            if (!s.equals(this.getInitialState())) {
-                spairs.add(new StatePair(this.getInitialState(), s));
+        for (State s : auto.getStates()) {
+            if (!s.equals(auto.getInitialState())) {
+                spairs.add(new StatePair(auto.getInitialState(), s));
             }
         }
-        this.addEpsilons(spairs);
-        this.getInitialState().setAccept(init);
+        auto.addEpsilons(spairs);
+        init.setAccept(binit);
     }
 
     protected void convertToCamelCaseAutomaton() {
 
         Set<Transition> handled = new HashSet<Transition>();
 
-        for (State s : this.getStates()) {
+        for (State s : auto.getStates()) {
 
             Set<Transition> transitions = new HashSet<Transition>();
 
@@ -226,9 +247,9 @@ public class AutomatonTrans extends Automaton {
             }
         }
 
-        this.removeDeadTransitions();
-        this.determinize();
-        this.reduce();
+        auto.removeDeadTransitions();
+        auto.determinize();
+        auto.reduce();
         this.kind = Kind.CAMEL;
         this.prepare();
 
@@ -252,20 +273,25 @@ public class AutomatonTrans extends Automaton {
     public void finalize() {
         stateId = 0;
         statenumber.clear();
-        numberstate.clear();
-        dfsNumering(this.getInitialState());
+        Set<State> visited = new HashSet<State>();
+        dfsNumering(init, visited);
     }
 
-    private void dfsNumering(State s) {
+    private void dfsNumering(State s, Set<State> visited) {
 
-        if (this.statenumber.containsKey(s))
+        if(!visited.contains(s))
+            visited.add(s);
+        else
             return;
 
         this.stateId++;
         this.statenumber.put(s, this.stateId);
-        this.numberstate.put(this.stateId,s);
+
+        if(!outgoing.containsKey(s))
+            return;
+
         for (FullTransition t : outgoing.get(s)) {
-            dfsNumering(t.getTargetState());
+            dfsNumering(t.getTargetState(), visited);
         }
     }
 
@@ -292,14 +318,15 @@ public class AutomatonTrans extends Automaton {
         sbuilder.append(" -> ").append(
                 "n" + statenumber.get(ft.getTargetState())).append(" [label=\"");
 
-        Transition t = ft.getLastTran();
-        if(t != null) {
-            appendCharString(t.getMin(), sbuilder);
+        //Transition t = ft.getLastTran();
+        //if(t != null) {
+            /**appendCharString(t.getMin(), sbuilder);
             if (t.getMin() != t.getMax()) {
                 sbuilder.append("-");
                 appendCharString(t.getMax(), sbuilder);
-            }
-        }
+            }**/
+            sbuilder.append(ft.getCarry());
+        //}
         sbuilder.append("\"");
 
         if(ft.isEpsilon()){
@@ -314,7 +341,7 @@ public class AutomatonTrans extends Automaton {
         AutomatonTrans a = new AutomatonTrans();
 
         HashMap<State, State> m = new HashMap<State, State>();
-        Set<State> states = this.getStates();
+        Set<State> states = auto.getStates();
 
         for (State s : states)
             m.put(s, new State());
@@ -325,9 +352,9 @@ public class AutomatonTrans extends Automaton {
             assert (p != null);
             p.setAccept(s.isAccept());
 
-            if (s.equals(this.getInitialState())) {
-                a.setInitialState(p);
-                assert (a.getInitialState() != null);
+            if (s.equals(auto.getInitialState())) {
+                auto.setInitialState(p);
+                assert auto.getInitialState() != null;
                 //LOGGER.info("INITIAL STATE");
             }
 
@@ -343,8 +370,6 @@ public class AutomatonTrans extends Automaton {
         return a;
     }
 
-
-    @Override
     public String toDot() {
 
         StringBuilder sbuilder = new StringBuilder("digraph Automaton {\n");

@@ -33,7 +33,8 @@ import static org.snt.autorex.AutomatonTrans.Kind.*;
 
 public class TestAutomatonTrans {
 
-    final static Logger logger = LoggerFactory.getLogger(TestAutomatonTrans.class);
+
+    final static Logger LOGGER = LoggerFactory.getLogger(TestAutomatonTrans.class);
 
 
     @Test
@@ -83,6 +84,8 @@ public class TestAutomatonTrans {
         AutomatonTrans ccas = new AutomatonTrans(a);
         AutomatonTrans sfx = new AutomatonTrans(a);
 
+        LOGGER.debug(sfx.toDot());
+
         Assert.assertNotNull(substr);
         Assert.assertNotNull(ccas);
         Assert.assertNotNull(sfx);
@@ -102,22 +105,23 @@ public class TestAutomatonTrans {
         for( int idx = 0 ; idx < s.length() ; idx++ ) {
             for( int nidx = 1 ; nidx <= s.length() - idx ; nidx++ ) {
                 String sub = s.substring(idx, idx+nidx);
-                Assert.assertTrue(substr.run(sub));
+                Assert.assertTrue(substr.auto.run(sub));
 
                 if(!s.endsWith(sub)) {
-                    Assert.assertFalse(sfx.run(sub));
+                    LOGGER.debug("sub {}", sub);
+                    Assert.assertFalse(sfx.auto.run(sub));
                 } else {
-                    Assert.assertTrue(sfx.run(sub));
+                    Assert.assertTrue(sfx.auto.run(sub));
                 }
             }
         }
 
         for( int idx = 0 ; idx < s.length() ; idx++ ) {
             String suf = s.substring(idx);
-            Assert.assertTrue(sfx.run(suf));
+            Assert.assertTrue(sfx.auto.run(suf));
         }
 
-        Assert.assertTrue(ccas.run(s.toUpperCase()));
+        Assert.assertTrue(ccas.auto.run(s.toUpperCase()));
 
         AutomatonTrans csubstr = substr.clone();
         assert(csubstr.equals(csubstr));

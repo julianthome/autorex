@@ -20,13 +20,10 @@
 package org.snt.autorex;
 
 import dk.brics.automaton.Automaton;
-import dk.brics.automaton.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 public class Autorex {
@@ -53,7 +50,7 @@ public class Autorex {
         AutomatonTrans ccas = new AutomatonTrans(a);
         assert(ccas != null);
         ccas.convertToCamelCaseAutomaton();
-        return ccas;
+        return ccas.auto;
     }
 
     /**
@@ -65,7 +62,7 @@ public class Autorex {
         AutomatonTrans substr = new AutomatonTrans(a);
         assert(substr != null);
         substr.convertToSubstringAutomaton();
-        return substr;
+        return substr.auto;
     }
 
     /**
@@ -77,60 +74,23 @@ public class Autorex {
         AutomatonTrans sfx = new AutomatonTrans(a);
         assert(sfx != null);
         sfx.convertToSuffixAutomaton();
-        return sfx;
+        return sfx.auto;
     }
 
+    /**
+     * returns all the bridges, i.e. all the concrete strings that are contained
+     * within an automaton
+     * @param a the automaton to check for bridges
+     * @return set of bridges (as strings)
+     */
+    public static Set<String> detectBridges(Automaton a) {
+        AutomatonTrans br = new AutomatonTrans(a);
+        Set<FullTransition> bridges = BridgeDetector.INSTANCE.detectBridges(br);
 
-    public static Set<List<FullTransition>> detectBridges(Automaton a) {
-
-        LOGGER.debug("detect bridges");
-
-        Set<FullTransition> bridges = BridgeDetector.INSTANCE.detect(a);
-        Set<FullTransition> grouped = new HashSet<>();
-
-        AutomatonTrans g = new AutomatonTrans(a);
-
-        Set<List<FullTransition>> ret = new HashSet<>();
+        Set<String> ret = new HashSet<>();
 
         for(FullTransition t : bridges) {
-
-            State src = t.getSourceState();
-            State dest = t.getTargetState();
-
-            //if(grouped.contains(t))
-            //    continue;
-
-            LinkedList<FullTransition> group = new LinkedList<>();
-            group.add(t);
-
-
-            while(g.incoming.containsKey(src) &&
-                    g.incoming.get(src).size() == 1) {
-                FullTransition trans = g.incoming.get(src).iterator().next();
-
-                LOGGER.debug("next in {}", trans.getLabel());
-                grouped.add(trans);
-                group.addFirst(g.incoming.get(src).iterator().next());
-                src = g.incoming.get(src).iterator().next().getSourceState();
-            }
-
-            /**while(g.outgoing.containsKey(dest) &&
-                    g.outgoing.get(dest).size() == 1) {
-                FullTransition trans = g.outgoing.get(dest).iterator().next();
-
-                LOGGER.debug("trans {}", trans.getLabel());
-                if(trans.isEpsilon()) {
-                    group.addLast(g.outgoing.get(dest).iterator().next());
-                    break;
-                }
-                LOGGER.debug("next out {}", trans.getLabel());
-
-                grouped.add(trans);
-                group.addLast(g.outgoing.get(dest).iterator().next());
-                dest = g.outgoing.get(dest).iterator().next().getTargetState();
-            }**/
-
-            ret.add(group);
+            ret.add(t.getCarry());
         }
 
         return ret;

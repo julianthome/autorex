@@ -55,7 +55,8 @@ public class StateEliminator {
         this.incoming = new HashMap<>();
         this.outgoing = new HashMap<>();
         this.states = new HashSet<State>();
-        this.init = new FullTransition(this.start, new Transition(' ', this.a.getInitialState()), this.a.getInitialState());
+        this.init = new FullTransition(this.start, new Transition(' ', this
+                .a.init), this.a.init);
         this.init.setIsEpsilon(true);
         this.transitions = new HashMap<>();
         this.end = new HashSet<FullTransition>();
@@ -74,7 +75,7 @@ public class StateEliminator {
         transitions.put(new StatePair(this.init.getSourceState(), this.init.getTargetState()), this.init);
 
         // get all transitions
-        for (State s : this.a.getStates()) {
+        for (State s : this.a.auto.getStates()) {
 
             states.add(s);
             for (Transition t : s.getTransitions()) {
@@ -91,12 +92,12 @@ public class StateEliminator {
                 }
             }
 
-            assert (this.a.getInitialState() != null);
+            assert (this.a.auto.getInitialState() != null);
         }
         addToIncoming(this.init);
         addToOutgoing(this.init);
 
-        for (State accept : this.a.getAcceptStates()) {
+        for (State accept : this.a.auto.getAcceptStates()) {
             FullTransition newFinalTransition =
                     new FullTransition(accept, new Transition(' ', accept), this.finish);
             newFinalTransition.setIsEpsilon(true);
@@ -452,7 +453,7 @@ public class StateEliminator {
     public String stateElimination() {
 
 
-        if(this.a.isTotal()) {
+        if(this.a.auto.isTotal()) {
             return ".*";
         }
 

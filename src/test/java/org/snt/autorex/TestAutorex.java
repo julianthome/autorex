@@ -26,9 +26,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Set;
-
 
 public class TestAutorex {
 
@@ -88,18 +85,14 @@ public class TestAutorex {
 
     @Test
     public void testBridgeDetector() {
-        String s = "a .* hello .*k";
+        Automaton a = new RegExp("a+ (y|u)hello .* s+").toAutomaton();
+        AutomatonTrans at = new AutomatonTrans(a);
+        BridgeDetector.INSTANCE.detectBridges(at);
 
-        Automaton a = new RegExp(s).toAutomaton();
-        Set<List<FullTransition>> ret = Autorex.detectBridges(a);
+        //Set<String> ss = Autorex.detectBridges(a);
 
-        for(List<FullTransition> l : ret) {
-            String st = "";
-            for(FullTransition t : l) {
-                st += t.getLabel();
-            }
-            LOGGER.debug("STR {}", st);
-        }
+        //LOGGER.info(ss.toString());
+
     }
 
 }
