@@ -75,7 +75,7 @@ public class StateEliminator {
         transitions.put(new StatePair(this.init.getSourceState(), this.init.getTargetState()), this.init);
 
         // get all transitions
-        for (State s : this.a.auto.getStates()) {
+            for (State s : this.a.auto.getStates()) {
 
             states.add(s);
             for (Transition t : s.getTransitions()) {
