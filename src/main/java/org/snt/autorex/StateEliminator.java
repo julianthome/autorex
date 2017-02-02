@@ -30,8 +30,6 @@ import java.util.*;
 public class StateEliminator {
 
 
-    final static Logger LOGGER = LoggerFactory.getLogger(StateEliminator.class);
-
     private static Character [] sarray = new Character[] {'+', '{', '}', '(', ')', '[', ']', '&', '^', '-', '?', '*','\"','$', '<', '>', '.', '|' };
     private static Set<Character> special = new HashSet<Character>(Arrays.asList(sarray));
 
@@ -502,8 +500,6 @@ public class StateEliminator {
                 //}
                 //debug();
                 //LOGGER.info(this.toDot());
-
-                LOGGER.debug("#States: {}", states.size());
             }
 
         }
@@ -517,7 +513,7 @@ public class StateEliminator {
 
     public String getRexpString() {
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (FullTransition t : this.transitions.values()) {
             sb.append(t.getLabel());
         }
@@ -586,7 +582,7 @@ public class StateEliminator {
 
 
     private String escapeSpecialCharacters(String s) {
-        StringBuffer out = new StringBuffer();
+        StringBuilder out = new StringBuilder();
         char pred = ' ';
         for(char c : s.toCharArray()) {
             if(out.length() > 0) {
