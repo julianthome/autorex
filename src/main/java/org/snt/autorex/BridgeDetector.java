@@ -38,9 +38,12 @@ public enum BridgeDetector {
     private int time = 0;
 
 
-    private String combineTrans(FullTransition a, FullTransition b) {
+    private StringBuilder combineTrans(FullTransition a, FullTransition b) {
         assert a.isConcrete() && b.isConcrete();
-        return "" + a.getCarry() + b.getCarry();
+        StringBuilder sb = new StringBuilder();
+        sb.append(a.getCarry());
+        sb.append(b.getCarry());
+        return sb;
     }
 
     private void preprocess(AutomatonTrans g) {
@@ -73,11 +76,8 @@ public enum BridgeDetector {
                     FullTransition nft = new FullTransition(in.getSourceState(),
                             out.getTargetState());
 
-                    String lbl = combineTrans(in, out);
 
-                    nft.setCarry(lbl);
-
-                    LOGGER.debug("add trans {}", lbl);
+                    nft.setCarry(combineTrans(in, out));
 
                     g.delTransition(in);
                     g.delTransition(out);

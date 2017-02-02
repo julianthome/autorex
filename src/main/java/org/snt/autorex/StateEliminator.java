@@ -75,7 +75,7 @@ public class StateEliminator {
         transitions.put(new StatePair(this.init.getSourceState(), this.init.getTargetState()), this.init);
 
         // get all transitions
-            for (State s : this.a.auto.getStates()) {
+        for (State s : this.a.auto.getStates()) {
 
             states.add(s);
             for (Transition t : s.getTransitions()) {
@@ -101,7 +101,8 @@ public class StateEliminator {
             FullTransition newFinalTransition =
                     new FullTransition(accept, new Transition(' ', accept), this.finish);
             newFinalTransition.setIsEpsilon(true);
-            newFinalTransition.setLabel("\u0000.\u0000{0\u0000}");
+            newFinalTransition.setLabel(new StringBuilder
+                    ("\u0000.\u0000{0\u0000}"));
             this.end.add(newFinalTransition);
             addToIncoming(newFinalTransition);
             addToOutgoing(newFinalTransition);
@@ -111,61 +112,61 @@ public class StateEliminator {
     }
 
     /**private void debug () {
-        LOGGER.info("");
-        LOGGER.info("transitions");
-        for(Map.Entry<StatePair, FullTransition> e : this.transitions.entrySet()) {
-            StatePair sp = e.getKey();
+     LOGGER.info("");
+     LOGGER.info("transitions");
+     for(Map.Entry<StatePair, FullTransition> e : this.transitions.entrySet()) {
+     StatePair sp = e.getKey();
 
-            LOGGER.info(getStringForState(sp.getFirstState()) + " " + getStringForState(sp.getSecondState()));
+     LOGGER.info(getStringBuilderForState(sp.getFirstState()) + " " + getStringBuilderForState(sp.getSecondState()));
 
-            FullTransition ft = e.getValue();
-            LOGGER.info("\t" +  getStringForTransition(ft));
-        }
-        LOGGER.info("");
-        LOGGER.info("outgoing");
-        for(Map.Entry<State, HashSet<FullTransition>> e : this.outgoing.entrySet()) {
-            LOGGER.info("\t" + getStringForState(e.getKey()));
-            for(FullTransition t : e.getValue()) {
-                LOGGER.info("\t\t" + getStringForTransition(t));
-            }
-        }
-        LOGGER.info("");
-        LOGGER.info("incoming");
-        for(Map.Entry<State, HashSet<FullTransition>> e : this.incoming.entrySet()) {
-            LOGGER.info("\t" + getStringForState(e.getKey()));
-            for(FullTransition t : e.getValue()) {
-                LOGGER.info("\t\t" + getStringForTransition(t));
-            }
-        }
-        LOGGER.info("");
-        LOGGER.info("states");
-        for(State s : this.states) {
-            LOGGER.info(getStringForState(s));
-        }
-    }**/
+     FullTransition ft = e.getValue();
+     LOGGER.info("\t" +  getStringBuilderForTransition(ft));
+     }
+     LOGGER.info("");
+     LOGGER.info("outgoing");
+     for(Map.Entry<State, HashSet<FullTransition>> e : this.outgoing.entrySet()) {
+     LOGGER.info("\t" + getStringBuilderForState(e.getKey()));
+     for(FullTransition t : e.getValue()) {
+     LOGGER.info("\t\t" + getStringBuilderForTransition(t));
+     }
+     }
+     LOGGER.info("");
+     LOGGER.info("incoming");
+     for(Map.Entry<State, HashSet<FullTransition>> e : this.incoming.entrySet()) {
+     LOGGER.info("\t" + getStringBuilderForState(e.getKey()));
+     for(FullTransition t : e.getValue()) {
+     LOGGER.info("\t\t" + getStringBuilderForTransition(t));
+     }
+     }
+     LOGGER.info("");
+     LOGGER.info("states");
+     for(State s : this.states) {
+     LOGGER.info(getStringBuilderForState(s));
+     }
+     }**/
 
     /**private Set<StatePair> getAllRelatedStatePairs(State s) {
 
-        Set<StatePair> related = new HashSet<StatePair>();
-        if(this.incoming.containsKey(s)) {
-            for (FullTransition f : this.incoming.get(s)) {
-                related.add(new StatePair(f.getSourceState(),s));
-            }
-        }
-        if(this.outgoing.containsKey(s)) {
-            for (FullTransition f : this.outgoing.get(s)) {
-                related.add(new StatePair(s,f.getTargetState()));
-            }
-        }
-        return related;
-    }**/
+     Set<StatePair> related = new HashSet<StatePair>();
+     if(this.incoming.containsKey(s)) {
+     for (FullTransition f : this.incoming.get(s)) {
+     related.add(new StatePair(f.getSourceState(),s));
+     }
+     }
+     if(this.outgoing.containsKey(s)) {
+     for (FullTransition f : this.outgoing.get(s)) {
+     related.add(new StatePair(s,f.getTargetState()));
+     }
+     }
+     return related;
+     }**/
 
 
     private boolean eliminate(State src, State s, State dest, Set<FullTransition> toDel, Set<FullTransition> toAdd) {
 
 
 
-        //LOGGER.info("eliminate " + getStringForState(src) + " " + getStringForState(s) + " " + getStringForState(dest));
+        //LOGGER.info("eliminate " + getStringBuilderForState(src) + " " + getStringBuilderForState(s) + " " + getStringBuilderForState(dest));
 
         StatePair loop = new StatePair(s,s);
 
@@ -185,101 +186,92 @@ public class StateEliminator {
         FullTransition src2dest = null;
         FullTransition dest2src = null;
 
-        String loopLabel = "";
-        String s2srcLabel = "";
-        String dest2destLabel = "";
-        String src2srcLabel = "";
-        String src2destLabel = "";
-        String dest2srcLabel = "";
-        String src2sLabel = "";
-        String dest2sLabel = "";
-        String s2destLabel = "";
+        StringBuilder loopLabel = new StringBuilder();
+        StringBuilder s2srcLabel = new StringBuilder();
+        StringBuilder dest2destLabel = new StringBuilder();
+        StringBuilder src2srcLabel = new StringBuilder();
+        StringBuilder src2destLabel = new StringBuilder();
+        StringBuilder dest2srcLabel = new StringBuilder();
+        StringBuilder src2sLabel = new StringBuilder();
+        StringBuilder dest2sLabel = new StringBuilder();
+        StringBuilder s2destLabel = new StringBuilder();
 
 
         if(this.transitions.containsKey(loop)) {
-            // there is a self loop involved
             sloop = this.transitions.get(loop);
-            //if(!sloop.isEpsilon())
-            loopLabel = "\u0000(" + sloop.getLabel() + "\u0000)\u0000*";
+            loopLabel.append("\u0000(");
+            loopLabel.append(sloop.getLabel());
+            loopLabel.append("\u0000)\u0000*");
             toDel.add(sloop);
-            //clearTransition(sloop);
         }
 
         if(this.transitions.containsKey(src2slink)) {
             src2s = this.transitions.get(src2slink);
-            //if(!src2s.isEpsilon())
             src2sLabel = src2s.getLabel();
-            if(src2s.isEpsilon() && src2s.getLabel().trim().length() == 0)
-                src2sLabel = "";
+            if(src2s.isEpsilon() && src2s.getLabel().toString().trim().length
+                    () == 0) {
+                src2sLabel.setLength(0);
+            }
             toDel.add(src2s);
-            //clearTransition(src2s);
         }
 
         if(this.transitions.containsKey(s2destlink)) {
             s2dest = this.transitions.get(s2destlink);
-            //if(!s2dest.isEpsilon())
-            s2destLabel = s2dest.getLabel();
-            //if(s2dest.isEpsilon() && s2dest.getLabel().trim().length() == 0)
-            //   s2destLabel = "";
-
+            s2destLabel.append(s2dest.getLabel());
             toDel.add(s2dest);
-            //clearTransition(s2dest);
         }
 
         if(this.transitions.containsKey(dest2slink)) {
             dest2s = this.transitions.get(dest2slink);
-            //if(!dest2s.isEpsilon())
-            dest2sLabel = dest2s.getLabel();
-
-            //if(dest2s.isEpsilon() && dest2s.getLabel().trim().length() == 0)
-            //    dest2sLabel = "";
-
+            dest2sLabel.append(dest2s.getLabel());
             toDel.add(dest2s);
-            //clearTransition(dest2s);
         }
 
         // Backlin from s to src
         if(this.transitions.containsKey(s2srclink)) {
             s2src = this.transitions.get(s2srclink);
-            //if(!s2src.isEpsilon())
-            s2srcLabel = s2src.getLabel();
-
-            //if(s2src.isEpsilon() && s2src.getLabel().trim().length() == 0)
-            //    s2srcLabel = "";
-
+            s2srcLabel.append(s2src.getLabel());
             toDel.add(s2src);
-           // clearTransition(s2src);
         }
 
         if(this.transitions.containsKey(src2destlink)) {
             src2dest = this.transitions.get(src2destlink);
-            //if(!s2src.isEpsilon())
-            src2destLabel =  "\u0000|" + src2dest.getLabel();
-            //LOGGER.info("WHOOO " + src2destLabel);
+            src2destLabel.append("\u0000|");
+            src2destLabel.append(src2dest.getLabel());
         }
 
         if(this.transitions.containsKey(dest2srclink)) {
             dest2src = this.transitions.get(dest2srclink);
-            //if(!s2src.isEpsilon())
-            dest2srcLabel = "\u0000|" + dest2src.getLabel();
-            //ogger.info("WHOO " + dest2srcLabel);
+            dest2srcLabel.append("\u0000|");
+            dest2srcLabel.append(dest2src.getLabel());
         }
 
 
-        src2destLabel = "\u0000(" + src2sLabel + loopLabel + s2destLabel + src2destLabel +"\u0000)";
-        dest2srcLabel = "\u0000(" + dest2sLabel + loopLabel + s2srcLabel + dest2srcLabel +"\u0000)";
+        StringBuilder pfx = new StringBuilder();
 
-        //src2destLabel = src2sLabel + loopLabel + s2destLabel + src2destLabel;
-        //dest2srcLabel = dest2sLabel + loopLabel + s2srcLabel + dest2srcLabel;
+        pfx.append("\u0000(");
+        pfx.append(src2sLabel);
+        pfx.append(loopLabel);
+        pfx.append(s2destLabel);
+        src2destLabel.insert(0, pfx);
+        src2destLabel.append("\u0000)");
+
+        pfx.setLength(0);
+        pfx.append("\u0000(");
+        pfx.append(dest2sLabel);
+        pfx.append(loopLabel);
+        pfx.append(s2srcLabel);
+        dest2srcLabel.insert(0, pfx);
+        dest2srcLabel.append("\u0000)");
 
         // just required if loops s <-> dest or s <-> src
-        src2srcLabel = src2sLabel + loopLabel + s2srcLabel;
-        dest2destLabel = dest2sLabel + loopLabel + s2destLabel;
+        src2srcLabel.append(src2sLabel);
+        src2srcLabel.append(loopLabel);
+        src2srcLabel.append(s2srcLabel);
 
-        //LOGGER.info("src2dest " + src2destLabel);
-        //LOGGER.info("dest2src " + dest2srcLabel);
-        //LOGGER.info("src2sr " + src2srcLabel);
-        //LOGGER.info("dest2dest " + dest2destLabel);
+        dest2destLabel.append(dest2sLabel);
+        dest2destLabel.append(loopLabel);
+        dest2destLabel.append(s2destLabel);
 
         if(src2s != null && s2dest != null) {
             FullTransition newSrc2Dest = new FullTransition(src, dest);
@@ -324,7 +316,7 @@ public class StateEliminator {
     }
 
     private void addToTransition(FullTransition ft) {
-        //LOGGER.info("ADD " + getStringForTransition(ft));
+        //LOGGER.info("ADD " + getStringBuilderForTransition(ft));
 
         FullTransition param = ft;
 
@@ -335,32 +327,33 @@ public class StateEliminator {
         if(this.transitions.containsKey(key)) {
             param = this.transitions.remove(key);
             //LOGGER.info("ALREADY CONTAINED EPSILON " + param.isEpsilon() + " " + param.getLabel());
-            String par = "";
-            if(!param.isEpsilon())
-                par =  "\u0000|" + param.getLabel();
+            StringBuilder par = new StringBuilder();
+            if(!param.isEpsilon()) {
+                par.append("\u0000|");
+                par.append(param.getLabel());
+            }
 
-
-            ft.setLabel("\u0000(" + ft.getLabel() + par + "\u0000)");
+            ft.getLabel().insert(0, "\u0000(");
+            ft.getLabel().append(par);
+            ft.getLabel().append("\u0000)");
         }
         this.transitions.put(key, ft);
     }
 
 
-    private boolean handleSpecialCases(State s) {
-        StatePair loop = new StatePair(s,s);
-
+    private boolean eliminate(State s) {
 
         if(!this.incoming.containsKey(s) || !this.outgoing.containsKey(s)) {
-            //LOGGER.info("cannot handle " + getStringForState(s));
+            //LOGGER.info("cannot handle " + getStringBuilderForState(s));
             return false;
         }
 
-        //LOGGER.info("SPECIAL  " + getStringForState(s));
+        //LOGGER.info("SPECIAL  " + getStringBuilderForState(s));
 
-        HashSet<FullTransition> incoming = new HashSet<FullTransition>();
-        HashSet<FullTransition> outgoing = new HashSet<FullTransition>();
-        HashSet<FullTransition> toAdd = new HashSet<FullTransition>();
-        HashSet<FullTransition> toDel = new HashSet<FullTransition>();
+        Set<FullTransition> incoming = new HashSet<>();
+        Set<FullTransition> outgoing = new HashSet<>();
+        Set<FullTransition> toAdd = new HashSet<>();
+        Set<FullTransition> toDel = new HashSet<>();
 
 
         incoming.addAll(this.incoming.get(s));
@@ -375,19 +368,13 @@ public class StateEliminator {
                 if(src.equals(s) || s.equals(dest))
                     continue;
 
-                //LOGGER.info("out for " + getStringForState(out.getTargetState()));
                 eliminate(src,s,dest,toDel,toAdd);
             }
-
         }
 
+        toDel.forEach(x -> clearTransition(x));
+        toAdd.forEach(x -> addLink(x));
 
-        for(FullTransition del : toDel){
-            clearTransition(del);
-        }
-        for(FullTransition add : toAdd) {
-            addLink(add);
-        }
         this.states.remove(s);
         this.transitions.remove(s);
         this.outgoing.remove(s);
@@ -397,19 +384,19 @@ public class StateEliminator {
     }
 
     private void addLink( FullTransition ft ){
-        //LOGGER.info("addAll link " + getStringForTransition(ft));
+        //LOGGER.info("addAll link " + getStringBuilderForTransition(ft));
         addToOutgoing(ft);
         addToIncoming(ft);
         addToTransition(ft);
     }
 
     private void clearTransition(FullTransition ft) {
-       clearTransition(ft.getSourceState(), ft.getTargetState());
+        clearTransition(ft.getSourceState(), ft.getTargetState());
     }
 
     private void clearTransition(State src, State dest) {
 
-        //LOGGER.info("clear transition " + getStringForState(src) + " " + getStringForState(dest));
+        //LOGGER.info("clear transition " + getStringBuilderForState(src) + " " + getStringBuilderForState(dest));
         assert(src != null);
         assert(dest != null);
 
@@ -423,7 +410,7 @@ public class StateEliminator {
         assert(trans != null);
 
         if(trans != null) {
-            //LOGGER.info("RM TRANS " + getStringForTransition(trans));
+            //LOGGER.info("RM TRANS " + getStringBuilderForTransition(trans));
             this.incoming.get(dest).remove(trans);
             this.outgoing.get(src).remove(trans);
         }
@@ -459,47 +446,14 @@ public class StateEliminator {
 
         prepare();
 
-        //LOGGER.info(this.toDot());
-
-
         LinkedList<State> worklist = new LinkedList<State>();
         worklist.addAll(this.states);
-
-        int t= 0;
-        int k = 0;
-        //while(this.states.size() > 1) {
-            //t++;
-            //if (t ==100)
-            //    break;
-            //k %= this.states.size();
-
-            //State s = states.get(k++);
-
         while(!worklist.isEmpty()) {
 
             State s = worklist.pop();
 
-            /**if (!this.states.contains(s)) {
-                LOGGER.info(this.a.getNumberOfState(s) + " not there anymore");
-                continue;
-            }**/
             if (!s.equals(this.finish) && !s.equals(this.start)) {
-                /**if (!this.incoming.containsKey(s)) {
-                    continue;
-                }
-                if (!this.outgoing.containsKey(s)) {
-                    continue;
-                }**/
-
-                //debug();
-                //LOGGER.info(this.toDot());
-                //LOGGER.info("");
-
-                //if(!handleStraightConnection(s)) {
-                handleSpecialCases(s);
-                //}
-                //debug();
-                //LOGGER.info(this.toDot());
+                eliminate(s);
             }
 
         }
@@ -507,84 +461,24 @@ public class StateEliminator {
 
         //LOGGER.info(this.toDot());
 
-        return escapeSpecialCharacters(getRexpString());
+        return escapeSpecialCharacters(getRexpStringBuilder()).toString();
     }
 
 
-    public String getRexpString() {
+    public StringBuilder getRexpStringBuilder() {
 
         StringBuilder sb = new StringBuilder();
         for (FullTransition t : this.transitions.values()) {
             sb.append(t.getLabel());
         }
 
-        return sb.toString().trim();
+        return sb;
     }
 
-
-    /**public String toDot() {
-
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("digraph g {\n");
-
-        for (State s : this.states) {
-
-            if (s.equals(this.init.getSourceState())) {
-                continue;
-            }
-
-            if (s.isAccept()) {
-                sb.append("\tn" + getStringForState(s) + "[shape=\"doublecircle\"];\n");
-            }
-
-            if (s.equals(this.finish)) {
-                sb.append("\tn" + getStringForState(s) + "[shape=\"doublecircle\",label=\"END\"];\n");
-            }
-
-        }
-
-        for (FullTransition t : this.transitions.values()) {
-
-
-            State src = t.getSourceState();
-            State dest = t.getTargetState();
-
-            sb.append("\tn" + getStringForState(src) + " -> n" +
-                        getStringForState(dest) + " [label=\"" + t.getLabel() + "\"];\n");
-
-        }
-        sb.append("}");
-
-        return sb.toString();
-
-    }**/
-
-
-    /**private String getStringForState(State s) {
-        if(this.a.getNumberOfState(s) >= 0) {
-            return this.a.getNumberOfState(s) + "";
-        } else {
-            if(s.equals(this.start)) {
-                return "start";
-            } else if (s.equals(this.finish)) {
-                return "finish";
-            } else {
-                return "x";
-            }
-        }
-    }**/
-
-
-    /**private String getStringForTransition(FullTransition t) {
-        return getStringForState(t.getSourceState()) + " -" + t.getLabel() + "-> " + getStringForState(t.getTargetState());
-    }**/
-
-
-    private String escapeSpecialCharacters(String s) {
+    private StringBuilder escapeSpecialCharacters(StringBuilder s) {
         StringBuilder out = new StringBuilder();
         char pred = ' ';
-        for(char c : s.toCharArray()) {
+        for(char c : s.toString().toCharArray()) {
             if(out.length() > 0) {
                 if (pred != '\u0000' && special.contains(c)) {
                     out.append("\\" + c);
@@ -599,7 +493,7 @@ public class StateEliminator {
             }
             pred = c;
         }
-        return out.toString();
+        return out;
     }
 
 

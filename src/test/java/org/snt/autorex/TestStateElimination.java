@@ -108,7 +108,7 @@ public class TestStateElimination {
     public void testSimple() {
         Automaton a = new RegExp("[a-z]{1,3}test[0-9]+").toAutomaton();
         String regex = Autorex.getRegexFromAutomaton(a);
-        logger.debug(regex.toString());
+        //LOGGER.debug(regex.toString());
         Assert.assertTrue(new RegExp(regex).toAutomaton().equals(a));
     }
 

@@ -90,7 +90,7 @@ public class Autorex {
         Set<String> ret = new HashSet<>();
 
         for(FullTransition t : bridges) {
-            ret.add(t.getCarry());
+            ret.add(t.getCarry().toString());
         }
 
         return ret;

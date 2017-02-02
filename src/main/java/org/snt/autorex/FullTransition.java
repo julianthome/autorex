@@ -31,17 +31,17 @@ public class FullTransition {
     private State dest;
     private Set<Transition> trans;
     private Transition recentlyAdded;
-    private String label = "";
-    private String carry = "";
+    private StringBuilder label = new StringBuilder();
+    private StringBuilder carry = new StringBuilder();
 
-    public String getCarry() {
+    public StringBuilder getCarry() {
         if(carry.length() > 0)
             return carry;
         else
-            return "" + getLastTran().getMax();
+            return new StringBuilder(getLastTran().getMax());
     }
 
-    public void setCarry(String carry) {
+    public void setCarry(StringBuilder carry) {
         this.carry = carry;
     }
 
@@ -84,14 +84,13 @@ public class FullTransition {
 
     public FullTransition(State src, Transition trans, State dest) {
         this.src = src;
-        this.trans = new HashSet<Transition>();
+        this.trans = new HashSet<>();
 
         if(trans != null) {
             this.trans.add(trans);
             this.label = getTransitionLabel();
-        } else {
-            this.label = "";
         }
+
         this.dest = dest;
         this.tid = id ++;
         this.isEpsilon = false;
@@ -150,7 +149,7 @@ public class FullTransition {
         this.label = getTransitionLabel();
     }
 
-    private String getTransitionString(Transition t) {
+    private StringBuilder getTransitionString(Transition t) {
 
         StringBuilder sb = new StringBuilder();
 
@@ -159,10 +158,11 @@ public class FullTransition {
         } else {
             sb.append("\u0000[" + t.getMin() + "\u0000-" + t.getMax() + "\u0000]");
         }
-        return sb.toString();
+
+        return sb;
     }
 
-    public String getTransitionLabel() {
+    public StringBuilder getTransitionLabel() {
 
         if(this.trans.size() == 1)
             return getTransitionString(this.trans.iterator().next());
@@ -175,14 +175,17 @@ public class FullTransition {
             sb.append(getTransitionString(t));
         }
 
-        return "\u0000(" + sb.toString() + "\u0000)";
+        sb.insert(0, "\u0000(");
+        sb.append("\u0000)");
+
+        return sb;
     }
 
-    public String getLabel() {
+    public StringBuilder getLabel() {
         return this.label;
     }
 
-    public void setLabel(String l) {
+    public void setLabel(StringBuilder l) {
         this.label = l;
     }
 
