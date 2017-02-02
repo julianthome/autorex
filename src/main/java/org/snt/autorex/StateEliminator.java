@@ -30,8 +30,11 @@ import java.util.*;
 public class StateEliminator {
 
 
+    final static Logger LOGGER = LoggerFactory.getLogger(StateEliminator.class);
+
+
     private static Character [] sarray = new Character[] {'+', '{', '}', '(', ')', '[', ']', '&', '^', '-', '?', '*','\"','$', '<', '>', '.', '|' };
-    private static Set<Character> special = new HashSet<Character>(Arrays.asList(sarray));
+    private static Set<Character> special = new HashSet<>(Arrays.asList(sarray));
 
     // Book keeping data structures
     HashMap<State, HashSet<FullTransition>> incoming = null;
@@ -39,7 +42,7 @@ public class StateEliminator {
     HashMap<StatePair, FullTransition> transitions = null;
     HashSet<State> states = null;
 
-    final static Logger logger = LoggerFactory.getLogger(StateEliminator.class);
+
 
     private AutomatonTrans a = null;
     private FullTransition init = null;
@@ -69,8 +72,8 @@ public class StateEliminator {
     private void prepare() {
 
         // init state has no incomings
-        incoming.put(this.init.getSourceState(), new HashSet<FullTransition>());
-        outgoing.put(this.init.getSourceState(), new HashSet<FullTransition>());
+        incoming.put(this.init.getSourceState(), new HashSet<>());
+        outgoing.put(this.init.getSourceState(), new HashSet<>());
         states.add(this.init.getSourceState());
         transitions.put(new StatePair(this.init.getSourceState(), this.init.getTargetState()), this.init);
 
@@ -110,56 +113,6 @@ public class StateEliminator {
         }
         this.states.add(this.finish);
     }
-
-    /**private void debug () {
-     LOGGER.info("");
-     LOGGER.info("transitions");
-     for(Map.Entry<StatePair, FullTransition> e : this.transitions.entrySet()) {
-     StatePair sp = e.getKey();
-
-     LOGGER.info(getStringBuilderForState(sp.getFirstState()) + " " + getStringBuilderForState(sp.getSecondState()));
-
-     FullTransition ft = e.getValue();
-     LOGGER.info("\t" +  getStringBuilderForTransition(ft));
-     }
-     LOGGER.info("");
-     LOGGER.info("outgoing");
-     for(Map.Entry<State, HashSet<FullTransition>> e : this.outgoing.entrySet()) {
-     LOGGER.info("\t" + getStringBuilderForState(e.getKey()));
-     for(FullTransition t : e.getValue()) {
-     LOGGER.info("\t\t" + getStringBuilderForTransition(t));
-     }
-     }
-     LOGGER.info("");
-     LOGGER.info("incoming");
-     for(Map.Entry<State, HashSet<FullTransition>> e : this.incoming.entrySet()) {
-     LOGGER.info("\t" + getStringBuilderForState(e.getKey()));
-     for(FullTransition t : e.getValue()) {
-     LOGGER.info("\t\t" + getStringBuilderForTransition(t));
-     }
-     }
-     LOGGER.info("");
-     LOGGER.info("states");
-     for(State s : this.states) {
-     LOGGER.info(getStringBuilderForState(s));
-     }
-     }**/
-
-    /**private Set<StatePair> getAllRelatedStatePairs(State s) {
-
-     Set<StatePair> related = new HashSet<StatePair>();
-     if(this.incoming.containsKey(s)) {
-     for (FullTransition f : this.incoming.get(s)) {
-     related.add(new StatePair(f.getSourceState(),s));
-     }
-     }
-     if(this.outgoing.containsKey(s)) {
-     for (FullTransition f : this.outgoing.get(s)) {
-     related.add(new StatePair(s,f.getTargetState()));
-     }
-     }
-     return related;
-     }**/
 
 
     private boolean eliminate(State src, State s, State dest, Set<FullTransition> toDel, Set<FullTransition> toAdd) {
@@ -455,6 +408,8 @@ public class StateEliminator {
             if (!s.equals(this.finish) && !s.equals(this.start)) {
                 eliminate(s);
             }
+
+            LOGGER.debug("#states: {}", states.size());
 
         }
 

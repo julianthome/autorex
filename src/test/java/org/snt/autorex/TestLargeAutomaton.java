@@ -43,10 +43,6 @@ public class TestLargeAutomaton {
     @Test
     public void testLargeAutomaton() {
 
-        if(true)
-            return;
-
-
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource("testcase.syntax")
                 .getFile());
