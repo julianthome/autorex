@@ -24,6 +24,7 @@ import dk.brics.automaton.StatePair;
 import dk.brics.automaton.Transition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.snt.autorex.util.BufferedString;
 
 import java.util.*;
 
@@ -104,8 +105,8 @@ public class StateEliminator {
             FullTransition newFinalTransition =
                     new FullTransition(accept, new Transition(' ', accept), this.finish);
             newFinalTransition.setIsEpsilon(true);
-            newFinalTransition.setLabel(new StringBuilder
-                    ("\u0000.\u0000{0\u0000}"));
+            newFinalTransition.setLabel(new BufferedString(
+                    ("\u0000.\u0000{0\u0000}")));
             this.end.add(newFinalTransition);
             addToIncoming(newFinalTransition);
             addToOutgoing(newFinalTransition);
@@ -119,7 +120,7 @@ public class StateEliminator {
 
 
 
-        //LOGGER.info("eliminate " + getStringBuilderForState(src) + " " + getStringBuilderForState(s) + " " + getStringBuilderForState(dest));
+        //LOGGER.info("eliminate " + getBufferedStringForState(src) + " " + getBufferedStringForState(s) + " " + getBufferedStringForState(dest));
 
         StatePair loop = new StatePair(s,s);
 
@@ -139,15 +140,15 @@ public class StateEliminator {
         FullTransition src2dest = null;
         FullTransition dest2src = null;
 
-        StringBuilder loopLabel = new StringBuilder();
-        StringBuilder s2srcLabel = new StringBuilder();
-        StringBuilder dest2destLabel = new StringBuilder();
-        StringBuilder src2srcLabel = new StringBuilder();
-        StringBuilder src2destLabel = new StringBuilder();
-        StringBuilder dest2srcLabel = new StringBuilder();
-        StringBuilder src2sLabel = new StringBuilder();
-        StringBuilder dest2sLabel = new StringBuilder();
-        StringBuilder s2destLabel = new StringBuilder();
+        BufferedString loopLabel = new BufferedString();
+        BufferedString s2srcLabel = new BufferedString();
+        BufferedString dest2destLabel = new BufferedString();
+        BufferedString src2srcLabel = new BufferedString();
+        BufferedString src2destLabel = new BufferedString();
+        BufferedString dest2srcLabel = new BufferedString();
+        BufferedString src2sLabel = new BufferedString();
+        BufferedString dest2sLabel = new BufferedString();
+        BufferedString s2destLabel = new BufferedString();
 
 
         if(this.transitions.containsKey(loop)) {
@@ -163,7 +164,7 @@ public class StateEliminator {
             src2sLabel = src2s.getLabel();
             if(src2s.isEpsilon() && src2s.getLabel().toString().trim().length
                     () == 0) {
-                src2sLabel.setLength(0);
+                src2sLabel.clear();
             }
             toDel.add(src2s);
         }
@@ -200,22 +201,22 @@ public class StateEliminator {
         }
 
 
-        StringBuilder pfx = new StringBuilder();
+        BufferedString pfx = new BufferedString();
 
-        pfx.append("\u0000(");
+        //pfx.append("\u0000(");
         pfx.append(src2sLabel);
         pfx.append(loopLabel);
         pfx.append(s2destLabel);
-        src2destLabel.insert(0, pfx);
-        src2destLabel.append("\u0000)");
+        src2destLabel.prepend(pfx);
+        //src2destLabel.append("\u0000)");
 
-        pfx.setLength(0);
-        pfx.append("\u0000(");
+        pfx.clear();
+        //pfx.append("\u0000(");
         pfx.append(dest2sLabel);
         pfx.append(loopLabel);
         pfx.append(s2srcLabel);
-        dest2srcLabel.insert(0, pfx);
-        dest2srcLabel.append("\u0000)");
+        dest2srcLabel.prepend(pfx);
+        //dest2srcLabel.append("\u0000)");
 
         // just required if loops s <-> dest or s <-> src
         src2srcLabel.append(src2sLabel);
@@ -269,7 +270,7 @@ public class StateEliminator {
     }
 
     private void addToTransition(FullTransition ft) {
-        //LOGGER.info("ADD " + getStringBuilderForTransition(ft));
+        //LOGGER.info("ADD " + getBufferedStringForTransition(ft));
 
         FullTransition param = ft;
 
@@ -280,13 +281,13 @@ public class StateEliminator {
         if(this.transitions.containsKey(key)) {
             param = this.transitions.remove(key);
             //LOGGER.info("ALREADY CONTAINED EPSILON " + param.isEpsilon() + " " + param.getLabel());
-            StringBuilder par = new StringBuilder();
+            BufferedString par = new BufferedString();
             if(!param.isEpsilon()) {
                 par.append("\u0000|");
                 par.append(param.getLabel());
             }
 
-            ft.getLabel().insert(0, "\u0000(");
+            ft.getLabel().prepend("\u0000(");
             ft.getLabel().append(par);
             ft.getLabel().append("\u0000)");
         }
@@ -297,11 +298,11 @@ public class StateEliminator {
     private boolean eliminate(State s) {
 
         if(!this.incoming.containsKey(s) || !this.outgoing.containsKey(s)) {
-            //LOGGER.info("cannot handle " + getStringBuilderForState(s));
+            //LOGGER.info("cannot handle " + getBufferedStringForState(s));
             return false;
         }
 
-        //LOGGER.info("SPECIAL  " + getStringBuilderForState(s));
+        //LOGGER.info("SPECIAL  " + getBufferedStringForState(s));
 
         Set<FullTransition> incoming = new HashSet<>();
         Set<FullTransition> outgoing = new HashSet<>();
@@ -337,7 +338,7 @@ public class StateEliminator {
     }
 
     private void addLink( FullTransition ft ){
-        //LOGGER.info("addAll link " + getStringBuilderForTransition(ft));
+        //LOGGER.info("addAll link " + getBufferedStringForTransition(ft));
         addToOutgoing(ft);
         addToIncoming(ft);
         addToTransition(ft);
@@ -349,7 +350,7 @@ public class StateEliminator {
 
     private void clearTransition(State src, State dest) {
 
-        //LOGGER.info("clear transition " + getStringBuilderForState(src) + " " + getStringBuilderForState(dest));
+        //LOGGER.info("clear transition " + getBufferedStringForState(src) + " " + getBufferedStringForState(dest));
         assert(src != null);
         assert(dest != null);
 
@@ -363,7 +364,7 @@ public class StateEliminator {
         assert(trans != null);
 
         if(trans != null) {
-            //LOGGER.info("RM TRANS " + getStringBuilderForTransition(trans));
+            //LOGGER.info("RM TRANS " + getBufferedStringForTransition(trans));
             this.incoming.get(dest).remove(trans);
             this.outgoing.get(src).remove(trans);
         }
@@ -413,16 +414,13 @@ public class StateEliminator {
 
         }
 
-
-        //LOGGER.info(this.toDot());
-
-        return escapeSpecialCharacters(getRexpStringBuilder()).toString();
+        return escapeSpecialCharacters(getRexpBufferedString()).toString();
     }
 
 
-    public StringBuilder getRexpStringBuilder() {
+    public BufferedString getRexpBufferedString() {
 
-        StringBuilder sb = new StringBuilder();
+        BufferedString sb = new BufferedString();
         for (FullTransition t : this.transitions.values()) {
             sb.append(t.getLabel());
         }
@@ -430,7 +428,7 @@ public class StateEliminator {
         return sb;
     }
 
-    private StringBuilder escapeSpecialCharacters(StringBuilder s) {
+    private BufferedString escapeSpecialCharacters(BufferedString s) {
         StringBuilder out = new StringBuilder();
         char pred = ' ';
         for(char c : s.toString().toCharArray()) {
@@ -448,7 +446,7 @@ public class StateEliminator {
             }
             pred = c;
         }
-        return out;
+        return new BufferedString(out);
     }
 
 
