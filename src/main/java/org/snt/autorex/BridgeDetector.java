@@ -22,7 +22,6 @@ package org.snt.autorex;
 import dk.brics.automaton.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snt.autorex.util.BufferedString;
 
 import java.util.*;
 
@@ -39,9 +38,9 @@ public enum BridgeDetector {
     private int time = 0;
 
 
-    private BufferedString combineTrans(FullTransition a, FullTransition b) {
+    private StringBuilder combineTrans(FullTransition a, FullTransition b) {
         assert a.isConcrete() && b.isConcrete();
-        BufferedString sb = new BufferedString();
+        StringBuilder sb = new StringBuilder();
         sb.append(a.getCarry());
         sb.append(b.getCarry());
         return sb;

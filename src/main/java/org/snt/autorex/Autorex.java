@@ -22,6 +22,7 @@ package org.snt.autorex;
 import dk.brics.automaton.Automaton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.snt.autorex.autograph.Gnfa;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -37,8 +38,14 @@ public class Autorex {
      * @return the string that represents the regular language accepted by a
      */
     public static String getRegexFromAutomaton(Automaton a) {
-        StateEliminator dcom = new StateEliminator(new AutomatonTrans(a));
-        return dcom.stateElimination();
+        Gnfa gnfa = Converter.INSTANCE.getGnfaFromAutomaton(a);
+
+        LOGGER.debug(gnfa.toDot());
+
+        //if(true)
+        //    System.exit(-1);
+
+        return Eliminator.INSTANCE.eliminate(gnfa);
     }
 
     /**

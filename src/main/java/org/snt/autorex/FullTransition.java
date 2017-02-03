@@ -21,7 +21,6 @@ package org.snt.autorex;
 
 import dk.brics.automaton.State;
 import dk.brics.automaton.Transition;
-import org.snt.autorex.util.BufferedString;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -32,17 +31,17 @@ public class FullTransition {
     private State dest;
     private Set<Transition> trans;
     private Transition recentlyAdded;
-    private BufferedString label = new BufferedString();
-    private BufferedString carry = new BufferedString();
+    private StringBuilder label = new StringBuilder();
+    private StringBuilder carry = new StringBuilder();
 
-    public BufferedString getCarry() {
-        if(!carry.isEmpty())
+    public StringBuilder getCarry() {
+        if(carry.length() > 0)
             return carry;
         else
-            return new BufferedString(getLastTran().getMax());
+            return new StringBuilder(getLastTran().getMax());
     }
 
-    public void setCarry(BufferedString carry) {
+    public void setCarry(StringBuilder carry) {
         this.carry = carry;
     }
 
@@ -51,7 +50,7 @@ public class FullTransition {
     private Kind kind;
 
     public boolean isConcrete() {
-        return isEpsilon || !carry.isEmpty() || getLastTran().getMin() ==
+        return isEpsilon || carry.length()>0 || getLastTran().getMin() ==
                 getLastTran()
                 .getMax();
     }
@@ -150,43 +149,43 @@ public class FullTransition {
         this.label = getTransitionLabel();
     }
 
-    private BufferedString getTransitionString(Transition t) {
+    private StringBuilder getTransitionString(Transition t) {
 
-        BufferedString sb = new BufferedString();
+        StringBuilder sb = new StringBuilder();
 
         if (t.getMax() == t.getMin()) {
             sb.append(t.getMin());
         } else {
-            sb.append("\u0000[" + t.getMin() + "\u0000-" + t.getMax() + "\u0000]");
+            sb.append("[" + t.getMin() + "-" + t.getMax() + "]");
         }
 
         return sb;
     }
 
-    public BufferedString getTransitionLabel() {
+    public StringBuilder getTransitionLabel() {
 
         if(this.trans.size() == 1)
             return getTransitionString(this.trans.iterator().next());
 
-        BufferedString sb = new BufferedString();
+        StringBuilder sb = new StringBuilder();
 
         for(Transition t : this.trans) {
-            if(!sb.isEmpty())
-                sb.append("\u0000|");
+            if(sb.length() > 0)
+                sb.append("|");
             sb.append(getTransitionString(t));
         }
 
-        sb.prepend("\u0000(");
-        sb.append("\u0000)");
+        sb.insert(0,"(");
+        sb.append(")");
 
         return sb;
     }
 
-    public BufferedString getLabel() {
+    public StringBuilder getLabel() {
         return this.label;
     }
 
-    public void setLabel(BufferedString l) {
+    public void setLabel(StringBuilder l) {
         this.label = l;
     }
 
@@ -196,7 +195,7 @@ public class FullTransition {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        java.lang.StringBuilder sb = new java.lang.StringBuilder();
         sb.append("==================================\n");
         sb.append("Source:"+ this.src.toString() + "\n");
         sb.append("Transition:" + this.trans.toString() + "\n");
