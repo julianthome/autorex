@@ -325,7 +325,7 @@ public class AutomatonTrans {
                 sbuilder.append("-");
                 appendCharString(t.getMax(), sbuilder);
             }**/
-            sbuilder.append(ft.getCarry());
+            sbuilder.append(ft.getTransitionLabel());
         //}
         sbuilder.append("\"");
 

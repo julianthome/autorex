@@ -37,20 +37,26 @@ public enum Eliminator {
 
             LOGGER.debug("QRIP {}", qrip.getDotLabel());
 
-            Set<State> i = a.vertexSet().stream().filter(q ->
-                    !q.equals(qrip) && q.getKind() != State.Kind.ACCEPT).collect
-                    (Collectors.toSet());
 
-            Set<State> j = a.vertexSet().stream().filter(q ->
-                    !q.equals(qrip) && q.getKind() != State.Kind.START).collect
-                    (Collectors.toSet());
+            Set<State> in = a.getConnectedInStates(qrip).stream()
+                    .filter(v -> v.getKind() != State.Kind.ACCEPT)
+                    .filter(v -> !v.equals(qrip)).collect
+                            (Collectors.toSet());
+
+            Set<State> out = a.getConnectedOutStates(qrip).stream()
+                    .filter(v -> v.getKind() != State.Kind.START)
+                    .filter(v -> !v.equals(qrip)).collect
+                            (Collectors.toSet());
 
 
             Set<Transition> trans = new HashSet<>();
 
-            for (State qi : i) {
-                for (State qj : j) {
-                    LOGGER.debug("LOOKING at {} {}", qi.getDotLabel(), qj.getDotLabel());
+            for(State qi : in) {
+                for (State qj : out) {
+
+                    LOGGER.debug("qi:{}; gj:{}; qrip:{}", qi.getDotLabel(), qj
+                            .getDotLabel(), qrip.getDotLabel());
+
 
                     StringBuilder lbl = new StringBuilder();
 
@@ -61,10 +67,10 @@ public enum Eliminator {
                     }
 
                     // make one loop
-                    if (a.containsEdge(qrip, qrip) && a.getEdge(qrip,qrip)
+                    if (a.containsEdge(qrip, qrip) && a.getEdge(qrip, qrip)
                             .getLabel().length() > 0) {
                         lbl.append("(");
-                        lbl.append(a.getEdge(qrip,qrip).getLabel());
+                        lbl.append(a.getEdge(qrip, qrip).getLabel());
                         lbl.append(")*");
                     }
 
@@ -75,11 +81,11 @@ public enum Eliminator {
                         lbl.append(")");
                     }
 
-                    if (a.containsEdge(qi, qj) && a.getEdge(qi, qj).getLabel()
+                    if (a.containsEdge(qi, qj) && a.getEdge(qi,qj).getLabel()
                             .length() > 0) {
-                        if(lbl.length() > 0)
+                        if (lbl.length() > 0)
                             lbl.append("|");
-                        lbl.append(a.getEdge(qi, qj).getLabel());
+                        lbl.append(a.getEdge(qi,qj).getLabel());
                     }
 
 
@@ -90,6 +96,7 @@ public enum Eliminator {
                     }
                 }
             }
+
 
             a.removeVertex(qrip);
 

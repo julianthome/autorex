@@ -55,10 +55,11 @@ public enum Converter {
             if(ag.containsEdge(arxsrc, arxdst)) {
                 t = ag.getEdge(arxsrc, arxdst);
                 t.getLabel().append("|");
-                t.getLabel().append(ft.getTransitionLabel());
+                t.getLabel().append(ft
+                        .getTransitionLabel());
             } else {
                 t = new Transition(arxsrc, arxdst, Transition.Kind
-                        .MATCH, ft
+                        .MATCH,ft
                         .getTransitionLabel());
             }
 
@@ -66,28 +67,6 @@ public enum Converter {
             ag.addVertex(arxsrc);
             ag.addEdge(t);
         }
-
-        ag.vertexSet().stream().
-                filter(v->!v.equals(init)).
-                filter(v ->!start.contains(v))
-                .forEach(
-                v -> {
-            Transition t = new Transition(init,v,Transition.Kind
-                    .MATCH);
-            ag.addEdge(t);
-        });
-
-        ag.vertexSet().stream().
-                filter(v-> ! v.equals(end)).
-                filter(v-> ! v.equals(init)).
-                filter(v ->!accepting.contains(v))
-                .forEach(
-                        v -> {
-                            Transition t = new Transition(v,end,Transition.Kind
-                                    .MATCH);
-                            ag.addEdge(t);
-                        });
-
 
         accepting.forEach(
             a -> {
@@ -105,16 +84,8 @@ public enum Converter {
                 }
         );
 
-
-
-
         return ag;
     }
-
-    public Automaton getAutmatonFromGnfa(Gnfa auto) {
-        return null;
-    }
-
 
 
     private org.snt.autorex.autograph.State getStateFrom

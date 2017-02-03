@@ -24,9 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.autorex.autograph.Gnfa;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class Autorex {
 
     final static Logger LOGGER = LoggerFactory.getLogger(AutomatonTrans.class);
@@ -83,27 +80,6 @@ public class Autorex {
         sfx.convertToSuffixAutomaton();
         return sfx.auto;
     }
-
-    /**
-     * returns all the bridges, i.e. all the concrete strings that are contained
-     * within an automaton
-     * @param a the automaton to check for bridges
-     * @return set of bridges (as strings)
-     */
-    public static Set<String> detectBridges(Automaton a) {
-        AutomatonTrans br = new AutomatonTrans(a);
-        Set<FullTransition> bridges = BridgeDetector.INSTANCE.detectBridges(br);
-
-        Set<String> ret = new HashSet<>();
-
-        for(FullTransition t : bridges) {
-            ret.add(t.getCarry().toString());
-        }
-
-        return ret;
-    }
-
-
 
 
 }

@@ -37,10 +37,19 @@ public class Transition implements Cloneable {
         this.m = m;
     }
 
+
+    public Transition(State src, State dst, Kind k, String s) {
+        this(src,dst,k);
+        this.m.append(s);
+    }
+
     public Transition(State src, State dst, Kind k) {
         this.src = src;
         this.dst = dst;
         this.kind = k;
+
+        if(k == Kind.EPSILON)
+            this.m = new StringBuilder(".{0}");
     }
 
     public Kind getKind() {
@@ -61,6 +70,10 @@ public class Transition implements Cloneable {
 
     public void setTarget(State dst) {
         this.dst = dst;
+    }
+
+    public boolean contains(State s) {
+        return this.getSource().equals(s) || this.getTarget().equals(s);
     }
 
     @Override
@@ -96,8 +109,7 @@ public class Transition implements Cloneable {
 
         Transition t = (Transition)o;
 
-        return this.src.equals(t.src) && this.dst.equals(t.dst) && this.m
-                .equals(t.m);
+        return this.src.equals(t.src) && this.dst.equals(t.dst);
     }
 
 

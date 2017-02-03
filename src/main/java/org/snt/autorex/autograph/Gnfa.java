@@ -40,6 +40,17 @@ public class Gnfa extends AbstractGraph implements Cloneable {
                 k).collect(Collectors.toSet());
     }
 
+    public Set<State> getConnectedInStates(State s) {
+        return incomingEdgesOf(s).stream().map(Transition::getSource).collect
+                (Collectors.toSet());
+    }
+
+    public Set<State> getConnectedOutStates(State s) {
+        return outgoingEdgesOf(s).stream().map(Transition::getTarget).collect
+                (Collectors.toSet());
+    }
+
+
     public void addEdge(Transition e) {
 
 
