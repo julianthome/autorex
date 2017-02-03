@@ -1,5 +1,5 @@
 /*
-* prex - approximate regular expression matching
+* autorex - fsm state eliminator
 *
 * Copyright 2016, Julian Thomé <julian.thome@uni.lu>
 *
