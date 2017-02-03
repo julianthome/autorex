@@ -29,14 +29,10 @@ public enum Eliminator {
 
     public String eliminate(Gnfa a) {
 
-        LOGGER.debug(a.toDot());
 
         while (a.vertexSet().size() > 2) {
 
             final State qrip = getQrip(a);
-
-            LOGGER.debug("QRIP {}", qrip.getDotLabel());
-
 
             Set<State> in = a.getConnectedInStates(qrip).stream()
                     .filter(v -> v.getKind() != State.Kind.ACCEPT)
@@ -54,9 +50,8 @@ public enum Eliminator {
             for(State qi : in) {
                 for (State qj : out) {
 
-                    LOGGER.debug("qi:{}; gj:{}; qrip:{}", qi.getDotLabel(), qj
-                            .getDotLabel(), qrip.getDotLabel());
-
+                    //LOGGER.debug("qi:{}; gj:{}; qrip:{}", qi.getDotLabel(), qj
+                    //        .getDotLabel(), qrip.getDotLabel());
 
                     StringBuilder lbl = new StringBuilder();
 
@@ -89,7 +84,7 @@ public enum Eliminator {
                     }
 
 
-                    LOGGER.debug("LBL {}", lbl);
+                    //LOGGER.debug("LBL {}", lbl);
 
                     if (lbl.length() > 0) {
                         trans.add(new Transition(qi, qj, Transition.Kind.MATCH, lbl));
@@ -100,6 +95,8 @@ public enum Eliminator {
 
             a.removeVertex(qrip);
 
+            LOGGER.debug("#states:{}", a.vertexSet().size());
+
             trans.forEach(t -> {
                 if (a.containsEdge(t.getSource(), t.getTarget())) {
                     a.getEdge(t.getSource(), t.getTarget()).setLabel(t.getLabel());
@@ -108,19 +105,19 @@ public enum Eliminator {
                 }
             });
 
-            LOGGER.debug("remove {}", qrip.getDotLabel());
-            LOGGER.debug(a.toDot());
+            //LOGGER.debug("remove {}", qrip.getDotLabel());
+            //LOGGER.debug(a.toDot());
         }
 
 
         assert a.edgeSet().size() == 1;
 
 
-        LOGGER.debug(a.toDot());
+        //LOGGER.debug(a.toDot());
 
         String ret = a.edgeSet().iterator().next().getLabel().toString();
 
-        LOGGER.debug("RETURN {}", ret);
+        //LOGGER.debug("RETURN {}", ret);
 
         return ret;
 

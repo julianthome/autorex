@@ -38,12 +38,12 @@ public class TestLargeAutomaton {
     final static Logger LOGGER = LoggerFactory.getLogger(TestLargeAutomaton.class);
 
     private static Map<String, State> smap = new HashMap();
-
+    private static boolean skip = true;
 
     @Test
     public void testLargeAutomaton() {
 
-        if(true)
+        if(skip)
             return;
 
         ClassLoader classLoader = getClass().getClassLoader();

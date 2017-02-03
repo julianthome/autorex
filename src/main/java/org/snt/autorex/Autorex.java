@@ -36,12 +36,6 @@ public class Autorex {
      */
     public static String getRegexFromAutomaton(Automaton a) {
         Gnfa gnfa = Converter.INSTANCE.getGnfaFromAutomaton(a);
-
-        LOGGER.debug(gnfa.toDot());
-
-        //if(true)
-        //    System.exit(-1);
-
         return Eliminator.INSTANCE.eliminate(gnfa);
     }
 

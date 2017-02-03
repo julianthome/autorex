@@ -19,9 +19,6 @@ public enum Converter {
 
     public Gnfa getGnfaFromAutomaton(Automaton auto) {
 
-        LOGGER.debug("ORIG ==== ===== ==== ===");
-        LOGGER.debug(auto.toDot());
-        LOGGER.debug("ORIG ==== ===== ==== ===");
         Gnfa ag = new Gnfa();
         AutomatonTrans at = new AutomatonTrans(auto);
 
