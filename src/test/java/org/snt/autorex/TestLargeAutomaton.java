@@ -38,12 +38,12 @@ public class TestLargeAutomaton {
     final static Logger LOGGER = LoggerFactory.getLogger(TestLargeAutomaton.class);
 
     private static Map<String, State> smap = new HashMap();
-    private static boolean skip = true;
+    private static boolean SKIP = true;
 
     @Test
     public void testLargeAutomaton() {
 
-        if(skip)
+        if(SKIP)
             return;
 
         ClassLoader classLoader = getClass().getClassLoader();
@@ -57,8 +57,6 @@ public class TestLargeAutomaton {
                 "s[0-9]+)$");
 
         Automaton a = new Automaton();
-
-        char x;
 
         try {
             fileReader =

@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.snt.autorex.autograph.Gnfa;
 import org.snt.autorex.autograph.State;
 import org.snt.autorex.autograph.Transition;
+import org.snt.autorex.utils.Tuple;
 
 import java.util.HashSet;
 import java.util.NoSuchElementException;
@@ -48,6 +49,17 @@ public enum Eliminator {
 
     public String eliminate(Gnfa a) {
 
+        //LOGGER.debug("state elimination");
+
+        //LOGGER.debug(a.toDot());
+
+        handleTrivialCases(a);
+
+        //LOGGER.debug(a.toDot());
+
+
+        //if(true)
+        //    System.exit(-1);
 
         while (a.vertexSet().size() > 2) {
 
@@ -139,6 +151,42 @@ public enum Eliminator {
         //LOGGER.debug("RETURN {}", ret);
 
         return ret;
+
+    }
+
+
+
+    private Tuple<Transition,Transition> getMergeTrans(Gnfa a) {
+        try {
+            Transition nxt = a.edgeSet().stream().filter(
+                    t -> a.outDegreeOf(t.getSource()) == 1 &&
+                            a.inDegreeOf(t.getTarget()) == 1 &&
+                            a.outDegreeOf(t.getTarget()) == 1
+            ).filter(t -> t.getKind() == Transition.Kind.MATCH).findFirst()
+                    .get();
+
+            return new Tuple(nxt, a.outgoingEdgesOf(nxt.getTarget()).iterator
+                    ().next());
+        } catch (NoSuchElementException e) {
+            return null;
+        }
+    }
+
+
+    private void handleTrivialCases(Gnfa a) {
+        LOGGER.debug("handleTrivialCases gnfa");
+        Tuple<Transition, Transition> t;
+        while((t = getMergeTrans(a)) != null) {
+            Transition nt = new Transition(t.getFirst().getSource(), t
+                    .getSecond().getTarget(), Transition.Kind.MATCH, t
+                    .getFirst().getLabel().append(t.getSecond().getLabel()));
+            a.addEdge(nt);
+
+
+            a.removeVertex(t.getFirst().getTarget());
+
+            LOGGER.debug("#state {}", a.vertexSet().size());
+        }
 
     }
 
