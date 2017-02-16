@@ -29,6 +29,9 @@ public class Gnfa extends AbstractGraph implements Cloneable {
 
     final static Logger LOGGER = LoggerFactory.getLogger(Gnfa.class);
 
+    private State start;
+    private State end;
+
 
     public Set<Transition> getIncomingEdgesOfKind(State n, Transition.Kind k) {
         return super.incomingEdgesOf(n).stream().filter(e -> e.getKind() ==
@@ -62,6 +65,24 @@ public class Gnfa extends AbstractGraph implements Cloneable {
         super.addEdge(src,dst, e);
     }
 
+    public boolean addVertex(State s) {
+       if (s.getKind() == State.Kind.ACCEPT) {
+           this.end = s;
+       }
+       if(s.getKind() == State.Kind.START) {
+           this.start = s;
+       }
+       return super.addVertex(s);
+    }
+
+    public State getStart() {
+        return start;
+    }
+
+
+    public State getEnd() {
+        return end;
+    }
 
 
     public String toDot() {
@@ -97,15 +118,36 @@ public class Gnfa extends AbstractGraph implements Cloneable {
             State dst = e.getTarget();
 
             String label = "";
+            String color = "black";
+
             switch(e.getKind()){
                 case MATCH:
-                    label = " [label=\"" + e.getLabel() + "\",color=black];\n";
                     break;
                 case EPSILON:
-                    label = " [label=\"" + e.getLabel() + "\",color=red];\n";
+                    color = "red";
                     break;
-
             }
+
+            switch(e.getProp()) {
+                case NORMAL:
+                    color = "brown";
+                    break;
+                case BACK:
+                    color = "pink";
+                    break;
+                case FWD:
+                    color = "blue";
+                    break;
+                case CROSS:
+                    color = "yellow";
+                    break;
+                case TREE:
+                    color = "green";
+                    break;
+            }
+
+            label = "[label=\"" + e.getLabel() + "\",color=" + color + "];\n";
+
             sb.append("\t" + src.getDotLabel() + " -> " + dst.getDotLabel() + label);
         }
 

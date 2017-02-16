@@ -36,7 +36,7 @@ public class Autorex {
      */
     public static String getRegexFromAutomaton(Automaton a) {
         Gnfa gnfa = Converter.INSTANCE.getGnfaFromAutomaton(a);
-        return Eliminator.INSTANCE.eliminate(gnfa);
+        return StateEliminator.INSTANCE.eliminate(gnfa);
     }
 
     /**

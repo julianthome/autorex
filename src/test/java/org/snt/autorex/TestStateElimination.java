@@ -107,6 +107,4 @@ public class TestStateElimination {
         Assert.assertTrue(modAutomata("[a-z]{1,3}test[0-9]+", "abctest[0-6]{2,3}", Op.ISECT));
     }
 
-
-
 }

@@ -27,10 +27,33 @@ public class Transition implements Cloneable {
         MATCH
     }
 
+    public enum Property {
+        NORMAL,
+        BACK,
+        FWD,
+        CROSS,
+        TREE;
+    }
+
     private Kind kind = Kind.MATCH;
+    private Property prop = Property.NORMAL;
+
+    public void setKind(Kind kind) {
+        this.kind = kind;
+    }
+
+    public Property getProp() {
+        return prop;
+    }
+
+    public void setProp(Property prop) {
+        this.prop = prop;
+    }
+
     private StringBuilder m = new StringBuilder();
     private State src = null;
     private State dst = null;
+
 
     public Transition(State src, State dst, Kind k, StringBuilder m) {
         this(src,dst,k);

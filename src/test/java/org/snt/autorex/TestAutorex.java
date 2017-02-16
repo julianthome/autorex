@@ -77,19 +77,8 @@ public class TestAutorex {
         String s = "a+ hello .* s+";
 
         AutomatonTrans at = new AutomatonTrans(s);
-
         at.convertToSubstringAutomaton();
         LOGGER.info(at.toDot());
-
     }
-
-    /**@Test
-    public void testBridgeDetector() {
-        Automaton a = new RegExp("a+ (y|u)hello .* s+").toAutomaton();
-        AutomatonTrans at = new AutomatonTrans(a);
-        BridgeDetector.INSTANCE.detectBridges(at);
-        //Set<String> ss = Autorex.detectBridges(a);
-        //LOGGER.info(ss.toString());
-    }**/
 
 }

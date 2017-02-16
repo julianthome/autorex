@@ -31,12 +31,12 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public enum Eliminator {
+public enum StateEliminator {
 
     INSTANCE;
 
 
-    final static Logger LOGGER = LoggerFactory.getLogger(Eliminator.class);
+    final static Logger LOGGER = LoggerFactory.getLogger(StateEliminator.class);
 
     private State getQrip(Gnfa a) {
         try {
@@ -173,7 +173,7 @@ public enum Eliminator {
     }
 
 
-    private void handleTrivialCases(Gnfa a) {
+    public void handleTrivialCases(Gnfa a) {
         LOGGER.debug("handleTrivialCases gnfa");
         Tuple<Transition, Transition> t;
         while((t = getMergeTrans(a)) != null) {
