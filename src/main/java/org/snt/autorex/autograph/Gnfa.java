@@ -22,6 +22,7 @@ package org.snt.autorex.autograph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -150,14 +151,27 @@ public class Gnfa extends AbstractGraph implements Cloneable {
 
             sb.append("\t" + src.getDotLabel() + " -> " + dst.getDotLabel() + label);
         }
-
-
         sb.append("}\n");
 
         return sb.toString();
-
-
     }
 
+
+    private Gnfa subgraph(Collection<State> vertices) {
+        Gnfa g = new Gnfa();
+
+        for (State n : vertices) {
+            g.addVertex(n);
+        }
+
+        for (State n : vertices) {
+            for (Transition e : outgoingEdgesOf(n)) {
+                if (vertices.contains(e.getTarget())) {
+                    g.addEdge(e);
+                }
+            }
+        }
+        return g;
+    }
 
 }
