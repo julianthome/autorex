@@ -155,7 +155,6 @@ public enum StateEliminator {
     }
 
 
-
     private Tuple<Transition,Transition> getMergeTrans(Gnfa a) {
         try {
             Transition nxt = a.edgeSet().stream().filter(

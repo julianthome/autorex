@@ -1,5 +1,6 @@
 package org.snt.autorex;
 
+import org.jgrapht.traverse.DepthFirstIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snt.autorex.autograph.Gnfa;
@@ -8,8 +9,6 @@ import org.snt.autorex.autograph.Transition;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
 
 public enum Classifier {
 
@@ -23,62 +22,62 @@ public enum Classifier {
         BLACK
     }
 
+
+    static class ClassificationIterator extends DepthFirstIterator<State,
+            Transition> {
+
+        private int timer = 0;
+
+        private Map<State, Integer> dmap = new HashMap();
+        private Map<State, Color> cmap = new HashMap();
+
+        public ClassificationIterator(Gnfa g) {
+            super(g, g.getStart());
+        }
+
+        @Override
+        protected void encounterVertex(State vertex, Transition edge) {
+            if(edge != null)
+                edge.setProp(Transition.Property.TREE);
+
+            LOGGER.debug("e {}", vertex.getDotLabel());
+            dmap.put(vertex, timer++);
+            cmap.put(vertex, Color.GRAY);
+            super.encounterVertex(vertex,edge);
+        }
+
+        @Override
+        protected void encounterVertexAgain(State vertex, Transition edge) {
+            if(cmap.get(vertex) == Color.BLACK) {
+                if(dmap.get(edge.getSource()) < dmap.get(edge.getTarget())) {
+                    edge.setProp(Transition.Property.FWD);
+                } else if (dmap.get(edge.getSource()) > dmap.get(edge
+                        .getTarget())) {
+                    edge.setProp(Transition.Property.CROSS);
+                } else {
+                    edge.setProp(Transition.Property.FWD);
+                }
+            } else if (cmap.get(vertex) == Color.GRAY) {
+                edge.setProp(Transition.Property.BACK);
+            }
+            super.encounterVertexAgain(vertex,edge);
+        }
+
+        protected void finishVertex(State vertex) {
+            cmap.put(vertex, Color.BLACK);
+        }
+
+
+
+    }
+
     public void classify(Gnfa g) {
 
         LOGGER.debug("classify");
+        ClassificationIterator iter = new ClassificationIterator(g);
+        while(iter.hasNext())
+            iter.next();
 
-        Map<State, Color> cmap = new HashMap<>();
-        Map<State, Integer> dmap = new HashMap<>();
-        Map<State, Integer> fmap = new HashMap<>();
-
-        g.vertexSet().forEach(x -> {
-            cmap.put(x, Color.WHITE);
-            dmap.put(x, 0);
-            fmap.put(x, 0);
-        });
-
-
-        Stack<State> visited = new Stack<>();
-
-        int time = 0;
-
-        visited.add(g.getStart());
-
-        while (!visited.isEmpty()) {
-
-            State s = visited.pop();
-            time++;
-            dmap.put(s, time);
-
-            Set<Transition> trans = g.outgoingEdgesOf(s);
-
-            for (Transition t : trans) {
-
-                State nxt = t.getTarget();
-
-                Color nxtColor = cmap.get(nxt);
-
-                if (nxtColor == Color.WHITE) {
-                    cmap.put(nxt, Color.GRAY);
-                    time++;
-                    dmap.put(nxt, time);
-                    visited.push(nxt);
-                    t.setProp(Transition.Property.TREE);
-                } else if (nxtColor == Color.GRAY) {
-                    t.setProp(Transition.Property.BACK);
-                } else if (nxtColor == Color.BLACK) {
-                    t.setProp(Transition.Property.TREE);
-                    if (dmap.get(s) < dmap.get(nxt)) {
-                        t.setProp(Transition.Property.FWD);
-                    } else {
-                        t.setProp(Transition.Property.CROSS);
-                    }
-                }
-            }
-            cmap.put(s, Color.BLACK);
-            time++;
-            fmap.put(s, time);
-        }
     }
 
 
