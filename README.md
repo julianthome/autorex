@@ -19,6 +19,28 @@ another application).
 # Status
 [![Build Status](https://travis-ci.org/julianthome/autorex.svg?branch=master)](https://travis-ci.org/julianthome/autorex.svg?branch=master)  [![codecov](https://codecov.io/gh/julianthome/autorex/branch/master/graph/badge.svg)](https://codecov.io/gh/julianthome/autorex) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/autorex/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/autorex/badge.svg)  [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.github.julianthome/autorex/badge.svg)](http://www.javadoc.io/doc/com.github.julianthome/autorex) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Language](http://img.shields.io/badge/language-java-brightgreen.svg)](https://www.java.com/)
 
+# Maven Integration
+
+`autorex` is available on maven central. One can integrate it by using
+the following dependency in the `pom.xml` file. Note, that the maven releases
+do not necessarily contain the newest changes that are available in the
+repository. The maven releases are kept in sync with the tagged
+[releases](https://github.com/julianthome/autorex/releases). The API
+documentation for every release is avalable
+[here](http://www.javadoc.io/doc/com.github.julianthome/autorex). However,
+the content of this documentation, in particular the code examples and usage
+scenarios, is always aligned with the master branch of this repository. Hence,
+it might be that the latest `autorex` features are not yet available through
+the maven package.
+
+```xml
+<dependency>
+    <groupId>com.github.julianthome</groupId>
+    <artifactId>autorex</artifactId>
+    <version>1.0</version>
+</dependency>
+```
+
 # Usage
 
 ## State Elimination

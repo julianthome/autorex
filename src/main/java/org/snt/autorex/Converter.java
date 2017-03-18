@@ -50,8 +50,8 @@ public enum Converter {
 
     /**
      * convert dk.brics automaton into gnfa
-     * @param auto
-     * @return
+     * @param auto dk.brics automaton
+     * @return generalized non-deterministic finite automaton
      */
     public Gnfa getGnfaFromAutomaton(Automaton auto) {
 
