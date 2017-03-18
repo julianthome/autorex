@@ -1,47 +1,51 @@
 # autorex
 
-With `autorex`, one can convert an automaton back into its
-regular expression representation. The translation is
-based on the well-known state-elimination algorithm. One
-can find a very neat description of this algorithm
-in the textbook *Sipser, Michael.
-Introduction to the Theory of Computation.
-Vol. 2. Boston: Thomson Course Technology, 2006, Chapter
-1 (Starting from page 70)*. The implementation is based on the
+With `autorex`, one can convert an automaton back into its regular expression
+string representation. The translation is based on the state-elimination
+algorithm which is neatly described in *Sipser, Michael.  Introduction to the
+Theory of Computation.  Vol. 2.  Boston: Thomson Course Technology, 2006,
+Chapter 1 (Starting from page 70)*.  The implementation is based on the
 [dk.brics](http://www.brics.dk/automaton/) automaton package.
 
-With `dk.brics`, one can apply automaton operations such as
-concatenation, union, intersection, *etc.* on *input automata* to
-derive an *output automaton*. However, the automaton representation used by `dk.brics`
-might not be compatible with the one of another API. If you would like to
-use the result of a `dk.brics` computation together with
-different API that is using another automaton representation than
-`dk.brics`, you can use `autorex` for the
-purpose of translating the *output automaton* into a simple regular expression string,
-the most generic representation of a regular expression,
-that can then be used across different APIs.
+With `dk.brics`, one can apply automata operations such as concatenation,
+union, intersection, *etc.* on *input automata* to derive an *output
+automaton*. Once a regular expression string has been converted into the
+`dk.brics` automaton representation, it cannot be converted back to a String.
+However, in practice there might be cases where the output of the `dk.brics`
+automaton transformation is needed (e.g. to make the resulting regular
+expression human readable, or if you'd like to use the regular expression in
+another application). 
 
 # Status
-[![Build Status](https://travis-ci.org/julianthome/autorex.svg?branch=master)](https://travis-ci.org/julianthome/autorex.svg?branch=master)  [![codecov](https://codecov.io/gh/julianthome/autorex/branch/master/graph/badge.svg)](https://codecov.io/gh/julianthome/autorex)  
+[![Build Status](https://travis-ci.org/julianthome/autorex.svg?branch=master)](https://travis-ci.org/julianthome/autorex.svg?branch=master)  [![codecov](https://codecov.io/gh/julianthome/autorex/branch/master/graph/badge.svg)](https://codecov.io/gh/julianthome/autorex) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/autorex/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/autorex/badge.svg)  [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.github.julianthome/autorex/badge.svg)](http://www.javadoc.io/doc/com.github.julianthome/autorex) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Language](http://img.shields.io/badge/language-java-brightgreen.svg)](https://www.java.com/)
 
 # Usage
 
 ## State Elimination
 
 `autorex` has a very simple API for state elimination
-provided by the class `Autorex`:
+provided by the class `autorex`. The following example gives an intuition how
+`autorex` can be used. After creating some `dk.brics` automata, and after 
+performing a couple of operations on them, the result is stored in the `d` 
+automaton. Afterwards, we can simply invoke the `getRegexFromAutomaton` method
+on `d` in order to get the corresponding regular expression string.
 
 ```java
-Automaton a = new RegExp("[a-z]{1,3}test[0-9]+").toAutomaton();
-String regex = Autorex.getRegexFromAutomaton(a);
-System.out.println(regex.toString());
-assert(new RegExp(regex).toAutomaton().equals(a));
+Automaton a = new RegExp("(abc)+[0-9]{1,3}[dg]*").toAutomaton();
+Automaton b = new RegExp("12345678").toAutomaton();
+Automaton c = new RegExp(".{0,5}").toAutomaton();
+Automaton d = a.union(b).intersection(c); // output automaton
+
+String s0 = Autorex.getRegexFromAutomaton(d); // obtain regular expression String
+System.out.println("Regex String: " + s0);
 ```
-This example would yield the following output which is equivalent to
-`[a-z]{1,3}test[0-9]+`:
+
+`autorex` will give you the following regular expression string which is
+equivalent to the result of the computation (the automaton `d`) in the example
+above.  
 
 ```bash
-(((([a-z]t))((([f-s]|[u-z]|[a-d])(((t(es))(t[0-9]))([0-9])*.{0})|(((t(((t(es)|(es))|(es))(t[0-9]))|((((et)(es)|(es))|(es))(t[0-9])))|((((et)(es)|(es))|(es))(t[0-9])))([0-9])*.{0}))|(((t(((t(es)|(es))|(es))(t[0-9]))|((((et)(es)|(es))|(es))(t[0-9])))|((((et)(es)|(es))|(es))(t[0-9])))([0-9])*.{0}))|((((([a-z]([u-z]|[a-s]))([u-z]|[a-s])))(((t(es))(t[0-9]))([0-9])*.{0})|((((([a-z]([u-z]|[a-s]))t))(((t(es)|(es))|(es))(t[0-9])))([0-9])*.{0}))|((((([a-z]([u-z]|[a-s]))t))(((t(es)|(es))|(es))(t[0-9])))([0-9])*.{0})))|((((([a-z]([u-z]|[a-s]))([u-z]|[a-s])))(((t(es))(t[0-9]))([0-9])*.{0})|((((([a-z]([u-z]|[a-s]))t))(((t(es)|(es))|(es))(t[0-9])))([0-9])*.{0}))|((((([a-z]([u-z]|[a-s]))t))(((t(es)|(es))|(es))(t[0-9])))([0-9])*.{0})))
+(((.{0})(abc[0-9]))(g|d))(.{0})|(((.{0})(abc[0-9]))([0-9]))(.{0})|((.{0})(abc[0-9]))(.{0})
 ```
 
 ## Automaton Transformations
@@ -62,13 +66,31 @@ Automaton a = new RegExp(s).toAutomaton();
 Automaton ccas = Autorex.getCamelCaseAutomaton(a);
 Automaton substr = Autorex.getSubstringAutomaton(a);
 Automaton sfx = Autorex.getSuffixAutomaton(a);
-
 ```
 
 For more examples, please have a look at the provided test cases or at the javadoc
-documentation of the class `Autorex`.
+documentation of the class `autorex`.
 
 # Licence
-Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence"); You may not use this work except in compliance with the Licence. You may obtain a copy of the Licence at: https://joinup.ec.europa.eu/sites/default/files/eupl1.1.-licence-en_0.pdf
 
-Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permissions and limitations under the Licence.
+The MIT License (MIT)
+
+Copyright (c) 2016 Julian Thome <julian.thome.de@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
