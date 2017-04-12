@@ -83,7 +83,7 @@ public class TestAutorex {
     public void testConcreteSubstring() {
         String s = "a+ hello .* s+";
 
-        AutomatonTrans at = new AutomatonTrans(s);
+        AutomatonTrans at = new AutomatonTrans(s, new DefaultLabelTranslator());
         at.convertToSubstringAutomaton();
         LOGGER.info(at.toDot());
     }

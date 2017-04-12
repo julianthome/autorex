@@ -48,15 +48,19 @@ public enum Converter {
 
     final static Logger LOGGER = LoggerFactory.getLogger(Converter.class);
 
+    public Gnfa getGnfaFromAutomaton(Automaton auto) {
+        return getGnfaFromAutomaton(auto, new DefaultLabelTranslator());
+    }
+
     /**
      * convert dk.brics automaton into gnfa
      * @param auto dk.brics automaton
      * @return generalized non-deterministic finite automaton
      */
-    public Gnfa getGnfaFromAutomaton(Automaton auto) {
+    public Gnfa getGnfaFromAutomaton(Automaton auto, LabelTranslator ltrans) {
 
         Gnfa ag = new Gnfa();
-        AutomatonTrans at = new AutomatonTrans(auto);
+        AutomatonTrans at = new AutomatonTrans(auto, ltrans);
 
         Map<State,org.snt.autorex.autograph.State> smap = new HashMap<>();
         Set<org.snt.autorex.autograph.State> accepting = new HashSet<>();

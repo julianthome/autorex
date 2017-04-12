@@ -92,6 +92,7 @@ public class AutomatonTrans {
     protected Set<State>  states = new HashSet<>();
     protected Map<State, Integer> statenumber = new HashMap<>();
     protected State init = null;
+    protected LabelTranslator ltrans = null;
 
     HashMap<State, HashSet<FullTransition>> incoming = new HashMap<>();
     HashMap<State, HashSet<FullTransition>> outgoing = new HashMap<>();
@@ -106,16 +107,26 @@ public class AutomatonTrans {
         stateId = 0;
     }
 
-    public AutomatonTrans(Automaton a) {
+    public AutomatonTrans(Automaton a, LabelTranslator ltrans) {
         this();
+        this.ltrans = ltrans;
         this.auto = a.clone();
         this.init = this.auto.getInitialState();
         prepare();
         finalize();
     }
 
+
+    public AutomatonTrans(Automaton a) {
+        this(a, new DefaultLabelTranslator());
+    }
+
     public AutomatonTrans(String rexp) {
         this(new RegExp(rexp).toAutomaton());
+    }
+
+    public AutomatonTrans(String rexp, LabelTranslator ltrans) {
+        this(new RegExp(rexp).toAutomaton(),ltrans);
     }
 
     private void set() {
@@ -131,18 +142,17 @@ public class AutomatonTrans {
     }
 
 
+
     private void prepare() {
-
-        // init state has no incomings
-
         // get all transitions
         for (State s : auto.getStates()) {
             for (Transition t : s.getTransitions()) {
-                FullTransition ft = new FullTransition(s, t, t.getDest());
+                FullTransition ft = new FullTransition(s, t, t.getDest(), ltrans);
                 addTransition(ft);
             }
         }
     }
+
 
     public void addTransitions(Collection<FullTransition> ft) {
 
@@ -216,6 +226,7 @@ public class AutomatonTrans {
         auto.addEpsilons(spairs);
         init.setAccept(binit);
     }
+
 
     protected void convertToCamelCaseAutomaton() {
 

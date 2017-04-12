@@ -28,6 +28,7 @@ package org.snt.autorex;
 
 import dk.brics.automaton.Automaton;
 import dk.brics.automaton.RegExp;
+import dk.brics.automaton.Transition;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -37,6 +38,17 @@ import org.slf4j.LoggerFactory;
 public class TestStateElimination {
 
     final static Logger LOGGER = LoggerFactory.getLogger(TestStateElimination.class);
+
+    // a custom label translator
+    private static class Trans extends DefaultLabelTranslator {
+        @Override
+        public String getTransitionString(Transition t) {
+            if (t.getMin() == Character.MIN_VALUE && t.getMax() == Character.MAX_VALUE){
+                return ".";
+            }
+            return super.getTransitionString(t);
+        }
+    }
 
 
     private enum Op {
@@ -102,6 +114,13 @@ public class TestStateElimination {
         Assert.assertTrue(compareRexp("[13d]d*") == true);
         Assert.assertTrue(compareRexp("[a-z]{1,3}test[0-9]+") == true);
         Assert.assertTrue(compareRexp("\\(test\\)") == true);
+    }
+
+    @Test
+    public void testLabelTranslator() {
+        Automaton a = new RegExp("ab.*").toAutomaton();
+        String s0 = Autorex.getRegexFromAutomaton(a, new Trans());
+        LOGGER.debug(s0);
     }
 
     @Test

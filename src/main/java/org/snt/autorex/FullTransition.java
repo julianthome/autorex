@@ -28,7 +28,6 @@ package org.snt.autorex;
 
 import dk.brics.automaton.State;
 import dk.brics.automaton.Transition;
-import org.snt.autorex.utils.EscapeUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -47,6 +46,7 @@ public class FullTransition {
     private int tid;
     private boolean isEpsilon = false;
     private Kind kind;
+    private LabelTranslator ltrans = null;
 
     public enum Kind {
 
@@ -75,9 +75,13 @@ public class FullTransition {
 
     public static int id = 0;
 
-    public FullTransition(State src, Transition trans, State dest) {
+
+
+    public FullTransition(State src, Transition trans, State dest,
+                          LabelTranslator ltrans) {
         this.src = src;
         this.trans = new HashSet<>();
+        this.ltrans = ltrans;
 
         if(trans != null) {
             this.trans.add(trans);
@@ -91,11 +95,6 @@ public class FullTransition {
         this.recentlyAdded = trans;
     }
 
-    public FullTransition(State src, Transition trans, State dest, Kind kind) {
-        this(src,trans,dest);
-        this.kind = kind;
-    }
-
 
     public void setIsEpsilon(boolean eps) {
         if(eps) {
@@ -106,9 +105,6 @@ public class FullTransition {
     public boolean isEpsilon() {
         return this.kind == Kind.EPSILON;
 
-    }
-    public FullTransition(State src, State dest) {
-        this(src, null, dest);
     }
 
     public State getSourceState() {
@@ -142,31 +138,19 @@ public class FullTransition {
         this.label = getTransitionLabel();
     }
 
-    private String getTransitionString(Transition t) {
 
-        StringBuilder sb = new StringBuilder();
-
-        if (t.getMax() == t.getMin()) {
-            sb.append(EscapeUtils.escapeSpecialCharacters(String.valueOf(t.getMin
-                    ())));
-        } else {
-            sb.append("[" + t.getMin() + "-" + t.getMax() + "]");
-        }
-
-        return sb.toString();
-    }
 
     public String getTransitionLabel() {
 
         if(this.trans.size() == 1)
-            return getTransitionString(this.trans.iterator().next());
+            return ltrans.getTransitionString(this.trans.iterator().next());
 
         StringBuilder sb = new StringBuilder();
 
         for(Transition t : this.trans) {
             if(sb.length() > 0)
                 sb.append("|");
-            sb.append(getTransitionString(t));
+            sb.append(ltrans.getTransitionString(t));
         }
 
         sb.insert(0,"(");
