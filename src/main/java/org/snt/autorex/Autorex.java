@@ -70,6 +70,24 @@ public class Autorex {
         return getCamelCaseAutomaton(a, new DefaultLabelTranslator());
     }
 
+    /**
+     * returns the length automaton for a given automaton
+     * @param a
+     * @param ltrans
+     * @return
+     */
+    public static Automaton getLenAutomaton(Automaton a,
+                                                  LabelTranslator ltrans) {
+        AutomatonTrans ccas = new AutomatonTrans(a, ltrans);
+        assert(ccas != null);
+        ccas.convertToLenAutomaton();
+        return ccas.auto;
+    }
+
+    public static Automaton getLenAutomaton(Automaton a) {
+        return getLenAutomaton(a, new DefaultLabelTranslator());
+    }
+
 
     /**
      * returns a non case-sensitive automaton that is based on a

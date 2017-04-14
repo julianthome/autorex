@@ -28,6 +28,8 @@ package org.snt.autorex;
 
 import dk.brics.automaton.Automaton;
 import dk.brics.automaton.RegExp;
+import dk.brics.automaton.Transition;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -41,6 +43,17 @@ public class TestAutomatonTrans {
 
 
     final static Logger LOGGER = LoggerFactory.getLogger(TestAutomatonTrans.class);
+
+    // a custom label translator
+    private static class Trans extends DefaultLabelTranslator {
+        @Override
+        public String getTransitionString(Transition t) {
+            if (t.getMin() == Character.MIN_VALUE && t.getMax() == Character.MAX_VALUE){
+                return ".";
+            }
+            return super.getTransitionString(t);
+        }
+    }
 
 
     @Test
@@ -78,6 +91,14 @@ public class TestAutomatonTrans {
         Assert.assertTrue(k.toString().equals("suffix"));
         Assert.assertTrue(KindFromString("suffix").equals(k));
 
+        k = LEN;
+        Assert.assertFalse(k.isCamel());
+        Assert.assertFalse(k.isNormal());
+        Assert.assertFalse(k.isSubstring());
+        Assert.assertTrue(k.isLen());
+        Assert.assertTrue(k.toString().equals("len"));
+        Assert.assertTrue(KindFromString("len").equals(k));
+
     }
 
 
@@ -85,10 +106,12 @@ public class TestAutomatonTrans {
     public void testConversion() {
         String s = "hello my name is Alice";
 
+
         Automaton a = new RegExp(s).toAutomaton();
         AutomatonTrans substr = new AutomatonTrans(a);
         AutomatonTrans ccas = new AutomatonTrans(a);
         AutomatonTrans sfx = new AutomatonTrans(a);
+        AutomatonTrans len = new AutomatonTrans(a, new Trans());
 
         LOGGER.debug(sfx.toDot());
 
@@ -99,14 +122,17 @@ public class TestAutomatonTrans {
         substr.convertToSubstringAutomaton();
         ccas.convertToCamelCaseAutomaton();
         sfx.convertToSuffixAutomaton();
+        len.convertToLenAutomaton();
 
         Assert.assertNotNull(substr);
         Assert.assertNotNull(ccas);
         Assert.assertNotNull(sfx);
+        Assert.assertNotNull(len);
 
         Assert.assertNotNull(substr.toDot());
         Assert.assertNotNull(ccas.toDot());
         Assert.assertNotNull(sfx.toDot());
+        Assert.assertNotNull(len.toDot());
 
         for( int idx = 0 ; idx < s.length() ; idx++ ) {
             for( int nidx = 1 ; nidx <= s.length() - idx ; nidx++ ) {
@@ -129,8 +155,31 @@ public class TestAutomatonTrans {
 
         Assert.assertTrue(ccas.auto.run(s.toUpperCase()));
 
+
         AutomatonTrans csubstr = substr.clone();
-        assert(csubstr.equals(csubstr));
+        Assert.assertTrue(csubstr.equals(csubstr));
+
+        for(int i = 0; i++ < 10;) {
+            String m = RandomStringUtils.randomAlphanumeric(s.length());
+            Assert.assertTrue(len.auto.run(m));
+        }
+
+        for(int i = 0; i++ < 10;) {
+            String m = RandomStringUtils.randomAlphanumeric(0,s.length()-1);
+            Assert.assertFalse(len.auto.run(m));
+        }
+
+        for(int i = 0; i++ < 10;) {
+            String m = RandomStringUtils.randomAlphanumeric(s.length()+1, 200);
+            Assert.assertFalse(len.auto.run(m));
+        }
+
+
+
     }
+
+
+
+
 
 }

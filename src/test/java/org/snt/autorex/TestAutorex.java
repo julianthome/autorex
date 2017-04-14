@@ -78,14 +78,6 @@ public class TestAutorex {
         Assert.assertTrue(ccas.run(s.toUpperCase()));
 
     }
-
-    @Test
-    public void testConcreteSubstring() {
-        String s = "a+ hello .* s+";
-
-        AutomatonTrans at = new AutomatonTrans(s, new DefaultLabelTranslator());
-        at.convertToSubstringAutomaton();
-        LOGGER.info(at.toDot());
-    }
+    
 
 }

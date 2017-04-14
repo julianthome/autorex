@@ -41,7 +41,8 @@ public class AutomatonTrans {
         SUFFIX(1,"suffix"),
         NORMAL(3,"normal"),
         CAMEL(5, "camel"),
-        SUBSTRING(7, "substring");
+        SUBSTRING(7, "substring"),
+        LEN(9, "len");
 
         private final String sval;
         private final int ival;
@@ -65,6 +66,7 @@ public class AutomatonTrans {
                 case "normal": return NORMAL;
                 case "camel" : return CAMEL;
                 case "substring": return SUBSTRING;
+                case "len": return LEN;
 
             }
             // should never ever happen
@@ -80,6 +82,9 @@ public class AutomatonTrans {
         }
         public boolean isCamel() {
             return this == CAMEL;
+        }
+        public boolean isLen() {
+            return this == LEN;
         }
         public boolean isSubstring() {return this == SUBSTRING;}
 
@@ -100,7 +105,6 @@ public class AutomatonTrans {
 
     private int stateId;
 
-    private static Automaton any = new RegExp(".*").toAutomaton();
 
     public AutomatonTrans() {
         super();
@@ -129,6 +133,12 @@ public class AutomatonTrans {
         this(new RegExp(rexp).toAutomaton(),ltrans);
     }
 
+
+    private void reset() {
+        incoming.clear();
+        outgoing.clear();
+        transitions.clear();
+    }
     private void set() {
         for (State s : auto.getStates()) {
             s.setAccept(true);
@@ -145,6 +155,7 @@ public class AutomatonTrans {
 
     private void prepare() {
         // get all transitions
+        reset();
         for (State s : auto.getStates()) {
             for (Transition t : s.getTransitions()) {
                 FullTransition ft = new FullTransition(s, t, t.getDest(), ltrans);
@@ -267,11 +278,49 @@ public class AutomatonTrans {
 
         auto.removeDeadTransitions();
         auto.determinize();
-        auto.reduce();
         this.kind = Kind.CAMEL;
         this.prepare();
-
     }
+
+    protected void convertToLenAutomaton() {
+
+        Automaton a = new Automaton();
+
+        Map<Transition, State> transitions = new HashMap<>();
+
+        for (State s : auto.getStates()) {
+            for(Transition t : s.getTransitions()){
+                transitions.put(t, s);
+            }
+        }
+
+
+
+        for (Transition t : transitions.keySet()) {
+
+            if(t.getMin() == Character.MIN_VALUE && t.getMax() == Character
+                    .MAX_VALUE)
+                continue;
+
+            Transition tnew = new Transition(Character.MIN_VALUE,
+                    Character.MAX_VALUE, t.getDest());
+
+            State s = transitions.get(t);
+
+            LOGGER.debug("remove {}:{}", t.getMax(), t.getMax());
+
+
+            s.getTransitions().remove(t);
+            s.getTransitions().add(tnew);
+        }
+
+        auto.removeDeadTransitions();
+        auto.determinize();
+        this.kind = Kind.LEN;
+        this.prepare();
+        this.finalize();
+    }
+
 
     protected void convertToSubstringAutomaton() {
         setAccepting();
@@ -336,15 +385,9 @@ public class AutomatonTrans {
         sbuilder.append(" -> ").append(
                 "n" + statenumber.get(ft.getTargetState())).append(" [label=\"");
 
-        //Transition t = ft.getLastTran();
-        //if(t != null) {
-            /**appendCharString(t.getMin(), sbuilder);
-            if (t.getMin() != t.getMax()) {
-                sbuilder.append("-");
-                appendCharString(t.getMax(), sbuilder);
-            }**/
-            sbuilder.append(ft.getTransitionLabel());
-        //}
+
+        sbuilder.append(ft.getTransitionLabel());
+
         sbuilder.append("\"");
 
         if(ft.isEpsilon()){
