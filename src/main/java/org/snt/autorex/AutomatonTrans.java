@@ -36,13 +36,14 @@ public class AutomatonTrans {
 
     final static Logger LOGGER = LoggerFactory.getLogger(AutomatonTrans.class);
 
-    public static enum Kind {
+    public enum Kind {
 
         SUFFIX(1,"suffix"),
         NORMAL(3,"normal"),
         CAMEL(5, "camel"),
         SUBSTRING(7, "substring"),
-        LEN(9, "len");
+        LEN(9, "len"),
+        EPSILON(11, "epsilon");
 
         private final String sval;
         private final int ival;
@@ -67,6 +68,7 @@ public class AutomatonTrans {
                 case "camel" : return CAMEL;
                 case "substring": return SUBSTRING;
                 case "len": return LEN;
+                case "epsilon": return EPSILON;
 
             }
             // should never ever happen
@@ -87,7 +89,6 @@ public class AutomatonTrans {
             return this == LEN;
         }
         public boolean isSubstring() {return this == SUBSTRING;}
-
 
     }
 
@@ -182,33 +183,6 @@ public class AutomatonTrans {
         transitions.add(ft);
     }
 
-    public void delTransitions(Collection<FullTransition> ts) {
-        ts.forEach(t -> delTransition(t));
-    }
-
-    public void delTransition(FullTransition t) {
-        State target = t.getTargetState();
-        State source = t.getSourceState();
-        transitions.remove(t);
-        outgoing.get(source).remove(t);
-        incoming.get(target).remove(t);
-
-        if(outgoing.get(source).size() == 0){
-            outgoing.remove(source);
-        }
-        if(incoming.get(target).size() == 0){
-            incoming.remove(target);
-        }
-
-    }
-
-    public void delState(State s) {
-        incoming.remove(s);
-        outgoing.remove(s);
-        statenumber.remove(s);
-        states.remove(s);
-    }
-
 
     private void addToIncoming(FullTransition ft) {
         if (!incoming.containsKey(ft.getTargetState())) {
@@ -284,8 +258,6 @@ public class AutomatonTrans {
 
     protected void convertToLenAutomaton() {
 
-        Automaton a = new Automaton();
-
         Map<Transition, State> transitions = new HashMap<>();
 
         for (State s : auto.getStates()) {
@@ -293,8 +265,6 @@ public class AutomatonTrans {
                 transitions.put(t, s);
             }
         }
-
-
 
         for (Transition t : transitions.keySet()) {
 
@@ -337,6 +307,7 @@ public class AutomatonTrans {
         this.finalize();
     }
 
+
     public void finalize() {
         stateId = 0;
         statenumber.clear();
@@ -360,25 +331,6 @@ public class AutomatonTrans {
         for (FullTransition t : outgoing.get(s)) {
             dfsNumering(t.getTargetState(), visited);
         }
-    }
-
-    static void appendCharString(char var0, StringBuilder var1) {
-        if (var0 >= 33 && var0 <= 126 && var0 != 92 && var0 != 34) {
-            var1.append(var0);
-        } else {
-            var1.append("\\u");
-            String var2 = Integer.toHexString(var0);
-            if (var0 < 16) {
-                var1.append("000").append(var2);
-            } else if (var0 < 256) {
-                var1.append("00").append(var2);
-            } else if (var0 < 4096) {
-                var1.append("0").append(var2);
-            } else {
-                var1.append(var2);
-            }
-        }
-
     }
 
     void appendDot(StringBuilder sbuilder, FullTransition ft) {
@@ -455,11 +407,4 @@ public class AutomatonTrans {
         return sbuilder.append("}\n").toString();
     }
 
-
-    public int getNumberOfState(State s) {
-        if (this.statenumber.containsKey(s))
-            return this.statenumber.get(s);
-        else
-            return -1;
-    }
 }

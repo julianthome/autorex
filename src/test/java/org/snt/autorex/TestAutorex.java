@@ -78,6 +78,6 @@ public class TestAutorex {
         Assert.assertTrue(ccas.run(s.toUpperCase()));
 
     }
-    
+
 
 }

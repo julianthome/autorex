@@ -112,8 +112,7 @@ public class TestAutomatonTrans {
         AutomatonTrans ccas = new AutomatonTrans(a);
         AutomatonTrans sfx = new AutomatonTrans(a);
         AutomatonTrans len = new AutomatonTrans(a, new Trans());
-
-        LOGGER.debug(sfx.toDot());
+        AutomatonTrans eps = new AutomatonTrans(a);
 
         Assert.assertNotNull(substr);
         Assert.assertNotNull(ccas);
@@ -123,6 +122,9 @@ public class TestAutomatonTrans {
         ccas.convertToCamelCaseAutomaton();
         sfx.convertToSuffixAutomaton();
         len.convertToLenAutomaton();
+
+        LOGGER.debug(eps.auto.toDot());
+
 
         Assert.assertNotNull(substr);
         Assert.assertNotNull(ccas);
@@ -174,12 +176,6 @@ public class TestAutomatonTrans {
             Assert.assertFalse(len.auto.run(m));
         }
 
-
-
     }
-
-
-
-
 
 }

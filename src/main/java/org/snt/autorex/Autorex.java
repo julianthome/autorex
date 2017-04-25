@@ -124,6 +124,4 @@ public class Autorex {
         return getSuffixAutomaton(a, new DefaultLabelTranslator());
     }
 
-
-
 }
