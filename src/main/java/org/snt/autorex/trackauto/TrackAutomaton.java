@@ -99,7 +99,9 @@ public class TrackAutomaton extends DirectedAcyclicGraph<MemAutomatonNode,
     }
 
 
-
+    public void setName(String name){
+        root.setName(name);
+    }
 
     public MemAutomatonNode getRoot() {
         return root;

@@ -55,6 +55,8 @@ public enum Converter {
     /**
      * convert dk.brics automaton into gnfa
      * @param auto dk.brics automaton
+     * @param ltrans label translator
+     *
      * @return generalized non-deterministic finite automaton
      */
     public Gnfa getGnfaFromAutomaton(Automaton auto, LabelTranslator ltrans) {

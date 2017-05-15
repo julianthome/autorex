@@ -72,9 +72,9 @@ public class Autorex {
 
     /**
      * returns the length automaton for a given automaton
-     * @param a
-     * @param ltrans
-     * @return
+     * @param a an automaton
+     * @param ltrans a label translator
+     * @return len automaton
      */
     public static Automaton getLenAutomaton(Automaton a,
                                                   LabelTranslator ltrans) {
@@ -110,6 +110,7 @@ public class Autorex {
     /**
      * returns an automaton that accepts all the suffixes from a
      * @param a an automaton
+     * @param ltrans a label translator
      * @return an automaton that accepts all suffix strings from a
      */
     public static Automaton getSuffixAutomaton(Automaton a, LabelTranslator
@@ -120,6 +121,11 @@ public class Autorex {
         return sfx.auto;
     }
 
+    /**
+     * returns an automaton that accepts all the suffixes from a
+     * @param a an automaton
+     * @return an automaton that accepts all the suffixes from a
+     */
     public static Automaton getSuffixAutomaton(Automaton a) {
         return getSuffixAutomaton(a, new DefaultLabelTranslator());
     }
