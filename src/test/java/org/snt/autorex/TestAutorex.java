@@ -38,6 +38,33 @@ public class TestAutorex {
 
     final static Logger LOGGER = LoggerFactory.getLogger(TestAutorex.class);
 
+    @Test
+    public void testArex() {
+
+        String test = ".*X.*";
+        String test2 = "das (X|a) ist ein test";
+
+        Automaton a = new RegExp(test).toAutomaton();
+        Automaton b = new RegExp(test2).toAutomaton();
+
+
+        Automaton minus = b.minus(a);
+
+        LOGGER.info(minus.toDot());
+
+//        Automaton comp = a.complement();
+//        b = b.intersection(comp);
+//
+//        LOGGER.info("ret {}", comp.run("hello<das"));
+//        LOGGER.info("b ret {}", b.run("das ist"));
+//
+//
+//        LOGGER.info(b.toDot());
+
+
+ //       LOGGER.info(comp.toDot());
+
+    }
 
     @Test
     public void testConversion() {
