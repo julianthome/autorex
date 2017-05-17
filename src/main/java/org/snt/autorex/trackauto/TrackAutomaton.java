@@ -64,14 +64,14 @@ public class TrackAutomaton extends DirectedAcyclicGraph<MemAutomatonNode,
     }
 
 
-    protected TrackAutomaton(MemAutomatonNode.Kind kind, Automaton a){
+    public TrackAutomaton(MemAutomatonNode.Kind kind, Automaton a){
         super(MemAutomatonEdge.class);
         root = getNewNodeOfKind(kind, a, "");
         addVertex(root);
     }
 
 
-    protected TrackAutomaton(TrackAutomaton m) {
+    public TrackAutomaton(TrackAutomaton m) {
         super(MemAutomatonEdge.class);
         Map<MemAutomatonNode,MemAutomatonNode> smap = new HashMap<>();
 
