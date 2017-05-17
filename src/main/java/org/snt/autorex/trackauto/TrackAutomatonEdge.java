@@ -29,16 +29,16 @@ package org.snt.autorex.trackauto;
 
 import org.jgrapht.graph.DefaultEdge;
 
-public class MemAutomatonEdge extends DefaultEdge {
+public class TrackAutomatonEdge extends DefaultEdge {
 
     @Override
-    public MemAutomatonNode getSource() {
-        return (MemAutomatonNode)super.getSource();
+    public TrackAutomatonNode getSource() {
+        return (TrackAutomatonNode)super.getSource();
     }
 
     @Override
-    public MemAutomatonNode getTarget() {
-        return (MemAutomatonNode)super.getTarget();
+    public TrackAutomatonNode getTarget() {
+        return (TrackAutomatonNode)super.getTarget();
     }
 
 }

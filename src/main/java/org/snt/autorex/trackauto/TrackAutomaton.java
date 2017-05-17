@@ -42,17 +42,17 @@ import java.util.TreeSet;
 /**
  * An automaton that keeps track of all operation which are perfomred on it
  */
-public class TrackAutomaton extends DirectedAcyclicGraph<MemAutomatonNode,
-        MemAutomatonEdge> {
+public class TrackAutomaton extends DirectedAcyclicGraph<TrackAutomatonNode,
+        TrackAutomatonEdge> {
 
     final static Logger LOGGER = LoggerFactory.getLogger(TrackAutomaton.class);
 
-    private MemAutomatonNode root = null;
+    private TrackAutomatonNode root = null;
     private int id = 0;
 
     public TrackAutomaton(String name, String rexp) {
-        super(MemAutomatonEdge.class);
-        MemAutomatonNode mn  = getNewNodeOfKind(MemAutomatonNode.Kind.LEAF,
+        super(TrackAutomatonEdge.class);
+        TrackAutomatonNode mn  = getNewNodeOfKind(TrackAutomatonNode.Kind.LEAF,
                 new RegExp(rexp).toAutomaton(), name);
         root = mn;
         addVertex(root);
@@ -64,24 +64,24 @@ public class TrackAutomaton extends DirectedAcyclicGraph<MemAutomatonNode,
     }
 
 
-    public TrackAutomaton(MemAutomatonNode.Kind kind, Automaton a){
-        super(MemAutomatonEdge.class);
+    public TrackAutomaton(TrackAutomatonNode.Kind kind, Automaton a){
+        super(TrackAutomatonEdge.class);
         root = getNewNodeOfKind(kind, a, "");
         addVertex(root);
     }
 
 
     public TrackAutomaton(TrackAutomaton m) {
-        super(MemAutomatonEdge.class);
-        Map<MemAutomatonNode,MemAutomatonNode> smap = new HashMap<>();
+        super(TrackAutomatonEdge.class);
+        Map<TrackAutomatonNode,TrackAutomatonNode> smap = new HashMap<>();
 
-        for(MemAutomatonNode s : m.vertexSet()) {
-            MemAutomatonNode mn = getNewNodeOfKind(s.getKind(), s
+        for(TrackAutomatonNode s : m.vertexSet()) {
+            TrackAutomatonNode mn = getNewNodeOfKind(s.getKind(), s
                     .getAutomaton(), s.getName());
             smap.put(s, mn);
         }
 
-        for(MemAutomatonEdge s : m.edgeSet()) {
+        for(TrackAutomatonEdge s : m.edgeSet()) {
             try {
                 addDagEdge(smap.get(s.getSource()),smap.get(s.getTarget()));
             } catch (CycleFoundException e) {
@@ -93,9 +93,9 @@ public class TrackAutomaton extends DirectedAcyclicGraph<MemAutomatonNode,
         id = m.id;
     }
 
-    private MemAutomatonNode getNewNodeOfKind(MemAutomatonNode.Kind kind,
-                                              Automaton a, String name) {
-        return new MemAutomatonNode(kind, a, id++, name);
+    private TrackAutomatonNode getNewNodeOfKind(TrackAutomatonNode.Kind kind,
+                                                Automaton a, String name) {
+        return new TrackAutomatonNode(kind, a, id++, name);
     }
 
 
@@ -103,37 +103,37 @@ public class TrackAutomaton extends DirectedAcyclicGraph<MemAutomatonNode,
         root.setName(name);
     }
 
-    public MemAutomatonNode getRoot() {
+    public TrackAutomatonNode getRoot() {
         return root;
     }
 
-    public void setRoot(MemAutomatonNode root) {
+    public void setRoot(TrackAutomatonNode root) {
         this.root = root;
     }
 
 
     public TrackAutomaton union(TrackAutomaton a) {
-        return performBinOp(MemAutomatonNode.Kind.UNION, this, a);
+        return performBinOp(TrackAutomatonNode.Kind.UNION, this, a);
     }
 
     public TrackAutomaton intersect(TrackAutomaton other) {
-       return performBinOp(MemAutomatonNode.Kind.INTERSECTION, this, other);
+       return performBinOp(TrackAutomatonNode.Kind.INTERSECTION, this, other);
     }
 
     public TrackAutomaton complement() {
-        return performUnaryOp(MemAutomatonNode.Kind.COMPLEMENT, this);
+        return performUnaryOp(TrackAutomatonNode.Kind.COMPLEMENT, this);
     }
 
     public TrackAutomaton minus(TrackAutomaton other) {
-        return performBinOp(MemAutomatonNode.Kind.MINUS, this, other);
+        return performBinOp(TrackAutomatonNode.Kind.MINUS, this, other);
     }
 
     public TrackAutomaton concatenate(TrackAutomaton other) {
-        return performBinOp(MemAutomatonNode.Kind.CONCAT, this, other);
+        return performBinOp(TrackAutomatonNode.Kind.CONCAT, this, other);
     }
 
 
-    private static TrackAutomaton performBinOp(MemAutomatonNode.Kind kind,
+    private static TrackAutomaton performBinOp(TrackAutomatonNode.Kind kind,
                                          TrackAutomaton a1, TrackAutomaton a2) {
 
         Automaton a1root = a1.getRoot().getAutomaton();
@@ -163,7 +163,7 @@ public class TrackAutomaton extends DirectedAcyclicGraph<MemAutomatonNode,
         return ta;
     }
 
-    private static TrackAutomaton performUnaryOp(MemAutomatonNode.Kind kind,
+    private static TrackAutomaton performUnaryOp(TrackAutomatonNode.Kind kind,
                                                TrackAutomaton a1) {
 
         Automaton a1root = a1.getRoot().getAutomaton();
@@ -186,20 +186,20 @@ public class TrackAutomaton extends DirectedAcyclicGraph<MemAutomatonNode,
 
     private void addSubGraph(TrackAutomaton other) {
 
-        Map<MemAutomatonNode,MemAutomatonNode> smap = new HashMap<>();
+        Map<TrackAutomatonNode,TrackAutomatonNode> smap = new HashMap<>();
 
-        for(MemAutomatonNode s : other.getOrderedVertices()) {
-            MemAutomatonNode mn = getNewNodeOfKind(s.getKind(),s
+        for(TrackAutomatonNode s : other.getOrderedVertices()) {
+            TrackAutomatonNode mn = getNewNodeOfKind(s.getKind(),s
                     .getAutomaton().clone(), s.getName());
             smap.put(s, mn);
         }
 
-        for(MemAutomatonNode n : smap.values()) {
+        for(TrackAutomatonNode n : smap.values()) {
             LOGGER.debug("add v {}", n.getId());
             addVertex(n);
         }
 
-        for(MemAutomatonEdge s : other.edgeSet()) {
+        for(TrackAutomatonEdge s : other.edgeSet()) {
             try {
                 addDagEdge(smap.get(s.getSource()),smap.get(s.getTarget()));
             } catch (CycleFoundException e) {
@@ -216,8 +216,8 @@ public class TrackAutomaton extends DirectedAcyclicGraph<MemAutomatonNode,
     }
 
 
-    private Set<MemAutomatonNode> getOrderedVertices() {
-        Set<MemAutomatonNode> tset = new TreeSet<>();
+    private Set<TrackAutomatonNode> getOrderedVertices() {
+        Set<TrackAutomatonNode> tset = new TreeSet<>();
         tset.addAll(vertexSet());
         return tset;
     }
@@ -234,7 +234,7 @@ public class TrackAutomaton extends DirectedAcyclicGraph<MemAutomatonNode,
         sb.append("\tedge [fontname=Helvetica,fontsize=10];\n");
 
 
-        for (MemAutomatonNode n : getOrderedVertices()) {
+        for (TrackAutomatonNode n : getOrderedVertices()) {
             String shape = "";
             String color = "";
 
@@ -249,10 +249,10 @@ public class TrackAutomaton extends DirectedAcyclicGraph<MemAutomatonNode,
         }
 
 
-        for (MemAutomatonEdge e : this.edgeSet())  {
+        for (TrackAutomatonEdge e : this.edgeSet())  {
 
-            MemAutomatonNode src = e.getSource();
-            MemAutomatonNode dst = e.getTarget();
+            TrackAutomatonNode src = e.getSource();
+            TrackAutomatonNode dst = e.getTarget();
 
 
             sb.append("\tn" + src.getId() + " -> n" + dst.getId() +"\n");

@@ -29,7 +29,7 @@ package org.snt.autorex.trackauto;
 
 import dk.brics.automaton.Automaton;
 
-public class MemAutomatonNode implements Comparable<MemAutomatonNode> {
+public class TrackAutomatonNode implements Comparable<TrackAutomatonNode> {
 
     public enum Kind {
         UNION,
@@ -55,17 +55,17 @@ public class MemAutomatonNode implements Comparable<MemAutomatonNode> {
         this.id = id;
     }
 
-    public MemAutomatonNode(Kind kind,
-                            Automaton a,
-                            int id,
-                            String name) {
+    public TrackAutomatonNode(Kind kind,
+                              Automaton a,
+                              int id,
+                              String name) {
         this.a = a;
         this.kind = kind;
         this.id = id;
         this.name = name;
     }
 
-    public MemAutomatonNode(MemAutomatonNode n) {
+    public TrackAutomatonNode(TrackAutomatonNode n) {
         this.a = n.a.clone();
         this.kind = n.kind;
         this.id = n.id;
@@ -103,16 +103,16 @@ public class MemAutomatonNode implements Comparable<MemAutomatonNode> {
 
     @Override
     public boolean equals(Object other){
-        if(!(other instanceof MemAutomatonNode))
+        if(!(other instanceof TrackAutomatonNode))
             return false;
 
-        MemAutomatonNode o = (MemAutomatonNode)other;
+        TrackAutomatonNode o = (TrackAutomatonNode)other;
 
         return id == o.id;
     }
 
     @Override
-    public int compareTo(MemAutomatonNode n) {
+    public int compareTo(TrackAutomatonNode n) {
         return id - n.getId();
     }
 }
