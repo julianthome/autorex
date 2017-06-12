@@ -27,7 +27,7 @@ sudo : false
 jdk:
   - oraclejdk8
 
-install:
+script:
   - mvn clean package
 
 after_success:
