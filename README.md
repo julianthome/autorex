@@ -21,7 +21,7 @@ another application).
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)][licence]
 [![Language](http://img.shields.io/badge/language-java-brightgreen.svg)][language]
 [![Maven](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/autorex/badge.svg)][maven]
-[![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.github.julianthome/autorex-api/badge.svg)][javadoc]
+[![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.github.julianthome/autorex/badge.svg)][javadoc]
 [![Linux Build Status](https://img.shields.io/travis/julianthome/autorex/master.svg?label=Linux%20build)][travis]
 [![Windows Build status](https://img.shields.io/appveyor/ci/julianthome/autorex/master.svg?label=Windows%20build)][appveyor]
 [![Test Coverage](https://codecov.io/gh/julianthome/autorex/branch/master/graph/badge.svg)][coverage]
@@ -30,7 +30,7 @@ another application).
 [licence]: https://opensource.org/licenses/mit
 [language]: https://www.java.com
 [maven]: https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/autorex
-[javadoc]: http://www.javadoc.io/doc/com.github.julianthome/autorex-api
+[javadoc]: http://www.javadoc.io/doc/com.github.julianthome/autorex
 [travis]: https://travis-ci.org/julianthome/autorex
 [appveyor]: https://ci.appveyor.com/project/julianthome/autorex
 [codeclimate]: https://codeclimate.com/github/julianthome/autorex
