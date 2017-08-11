@@ -17,7 +17,24 @@ expression human readable, or if you'd like to use the regular expression in
 another application). 
 
 # Status
-[![Build Status](https://travis-ci.org/julianthome/autorex.svg?branch=master)](https://travis-ci.org/julianthome/autorex.svg?branch=master)  [![codecov](https://codecov.io/gh/julianthome/autorex/branch/master/graph/badge.svg)](https://codecov.io/gh/julianthome/autorex) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/autorex/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/autorex/badge.svg)  [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.github.julianthome/autorex/badge.svg)](http://www.javadoc.io/doc/com.github.julianthome/autorex) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Language](http://img.shields.io/badge/language-java-brightgreen.svg)](https://www.java.com/)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)][licence]
+[![Language](http://img.shields.io/badge/language-java-brightgreen.svg)][language]
+[![Maven](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/autorex/badge.svg)][maven]
+[![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.github.julianthome/autorex-api/badge.svg)][javadoc]
+[![Linux Build Status](https://img.shields.io/travis/julianthome/autorex/master.svg?label=Linux%20build)][travis]
+[![Windows Build status](https://img.shields.io/appveyor/ci/julianthome/autorex/master.svg?label=Windows%20build)][appveyor]
+[![Test Coverage](https://codecov.io/gh/julianthome/autorex/branch/master/graph/badge.svg)][coverage]
+[![Code Climate](https://codeclimate.com/github/julianthome/autorex/badges/gpa.svg)][codeclimate]
+
+[licence]: https://opensource.org/licenses/mit
+[language]: https://www.java.com
+[maven]: https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/autorex
+[javadoc]: http://www.javadoc.io/doc/com.github.julianthome/autorex-api
+[travis]: https://travis-ci.org/julianthome/autorex
+[appveyor]: https://ci.appveyor.com/project/julianthome/autorex
+[codeclimate]: https://codeclimate.com/github/julianthome/autorex
+[coverage]: https://codecov.io/gh/julianthome/autorex
 
 # Maven Integration
 
