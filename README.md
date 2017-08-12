@@ -25,7 +25,7 @@ another application).
 [![Linux Build Status](https://img.shields.io/travis/julianthome/autorex/master.svg?label=Linux%20build)][travis]
 [![Windows Build status](https://img.shields.io/appveyor/ci/julianthome/autorex/master.svg?label=Windows%20build)][appveyor]
 [![Test Coverage](https://codecov.io/gh/julianthome/autorex/branch/master/graph/badge.svg)][coverage]
-[![Code Climate](https://codeclimate.com/github/julianthome/autorex/badges/gpa.svg)][codeclimate]
+[![Code Climate](https://codeclimate.com/github/julianthome/autorex/badges/issue_count.svg)][codeclimate]
 
 [licence]: https://opensource.org/licenses/mit
 [language]: https://www.java.com
