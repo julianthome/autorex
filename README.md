@@ -22,7 +22,6 @@ another application).
 [![Language](http://img.shields.io/badge/language-java-brightgreen.svg)][language]
 [![Maven](https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/autorex/badge.svg)][maven]
 [![Linux Build Status](https://img.shields.io/travis/julianthome/autorex/master.svg?label=Linux%20build)][travis]
-[![Windows Build status](https://img.shields.io/appveyor/ci/julianthome/autorex/master.svg?label=Windows%20build)][appveyor]
 [![Test Coverage](https://codecov.io/gh/julianthome/autorex/branch/master/graph/badge.svg)][coverage]
 [![Code Climate](https://codeclimate.com/github/julianthome/autorex/badges/issue_count.svg)][codeclimate]
 
@@ -30,7 +29,6 @@ another application).
 [language]: https://www.java.com
 [maven]: https://maven-badges.herokuapp.com/maven-central/com.github.julianthome/autorex
 [travis]: https://travis-ci.org/julianthome/autorex
-[appveyor]: https://ci.appveyor.com/project/julianthome/autorex
 [codeclimate]: https://codeclimate.com/github/julianthome/autorex
 [coverage]: https://codecov.io/gh/julianthome/autorex
 
@@ -41,7 +39,7 @@ the following dependency in the `pom.xml` file. Note, that the maven releases
 do not necessarily contain the newest changes that are available in the
 repository. The maven releases are kept in sync with the tagged
 [releases](https://github.com/julianthome/autorex/releases). The API
-documentation for every release is avalable
+documentation for every release is available.
 [here](http://www.javadoc.io/doc/com.github.julianthome/autorex). However,
 the content of this documentation, in particular the code examples and usage
 scenarios, is always aligned with the master branch of this repository. Hence,
@@ -82,7 +80,7 @@ equivalent to the result of the computation (the automaton `d`) in the example
 above.  
 
 ```bash
-(((.{0})(abc[0-9]))(g|d))(.{0})|(((.{0})(abc[0-9]))([0-9]))(.{0})|((.{0})(abc[0-9]))(.{0})
+(((abc[0-9])([0-9])))|((abc[0-9])((g|d)|.{0}))
 ```
 
 ## Automaton Transformations
