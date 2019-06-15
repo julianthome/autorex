@@ -32,30 +32,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TestCharUtils {
-
-    final static Logger logger = LoggerFactory.getLogger(TestCharUtils.class);
-
-
     @Test
     public void testDigit() {
-
         for (char c = '0'; c <= '9'; c++) {
             Assert.assertFalse(CharUtils.isLowerCase(c));
             Assert.assertFalse(CharUtils.isUpperCase(c));
             Assert.assertTrue(CharUtils.isDigit(c));
         }
-
         for (char c = 'a'; c <= 'z'; c++) {
             Assert.assertTrue(CharUtils.isLowerCase(c));
             Assert.assertFalse(CharUtils.isUpperCase(c));
             Assert.assertFalse(CharUtils.isDigit(c));
         }
-
         for (char c = 'A'; c <= 'Z'; c++) {
             Assert.assertFalse(CharUtils.isLowerCase(c));
             Assert.assertTrue(CharUtils.isUpperCase(c));
             Assert.assertFalse(CharUtils.isDigit(c));
         }
     }
-
 }

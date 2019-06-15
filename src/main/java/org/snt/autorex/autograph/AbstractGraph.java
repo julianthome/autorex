@@ -38,7 +38,6 @@ import java.util.Set;
  */
 public class AbstractGraph implements DirectedGraph<State, Transition> {
 
-
     private final DirectedPseudograph<State, Transition> delegate;
 
     public AbstractGraph() {
@@ -72,7 +71,6 @@ public class AbstractGraph implements DirectedGraph<State, Transition> {
     public int degreeOf(State arg0) {
         return delegate.degreeOf(arg0);
     }
-
 
     public Set<Transition> edgeSet() {
         return delegate.edgeSet();
@@ -135,7 +133,6 @@ public class AbstractGraph implements DirectedGraph<State, Transition> {
         return delegate.incomingEdgesOf(arg0);
     }
 
-
     public int outDegreeOf(State arg0) {
         return delegate.outDegreeOf(arg0);
     }
@@ -167,7 +164,6 @@ public class AbstractGraph implements DirectedGraph<State, Transition> {
     public boolean removeVertex(State arg0) {
         return delegate.removeVertex(arg0);
     }
-
 
     public String toString() {
         return delegate.toString();

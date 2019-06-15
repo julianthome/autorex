@@ -60,14 +60,12 @@ public enum Converter {
      * @return generalized non-deterministic finite automaton
      */
     public Gnfa getGnfaFromAutomaton(Automaton auto, LabelTranslator ltrans) {
-
         Gnfa ag = new Gnfa();
         AutomatonTrans at = new AutomatonTrans(auto, ltrans);
 
         Map<State,org.snt.autorex.autograph.State> smap = new HashMap<>();
         Set<org.snt.autorex.autograph.State> accepting = new HashSet<>();
         Set<org.snt.autorex.autograph.State> start = new HashSet<>();
-
 
         org.snt.autorex.autograph.State end =  new org.snt.autorex.autograph
                 .State(org.snt.autorex
@@ -140,7 +138,6 @@ public enum Converter {
                 .State(org.snt.autorex
                 .autograph.State.Kind.NORMAL);
 
-
         if(s.isAccept()) {
             accepting.add(ret);
         }
@@ -153,5 +150,4 @@ public enum Converter {
 
         return ret;
     }
-
 }

@@ -57,5 +57,4 @@ public class Tuple<K, T> {
     public void setSecond(T second) {
         this.second = second;
     }
-
 }

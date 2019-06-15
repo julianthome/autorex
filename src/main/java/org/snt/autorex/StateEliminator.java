@@ -65,9 +65,7 @@ public enum StateEliminator {
      * @return the corresponding string for a regular expression.
      */
     public String eliminate(Gnfa a) {
-
         handleTrivialCases(a);
-
 
         while (a.vertexSet().size() > 2) {
 
@@ -88,10 +86,6 @@ public enum StateEliminator {
 
             for(State qi : in) {
                 for (State qj : out) {
-
-                    //LOGGER.debug("qi:{}; gj:{}; qrip:{}", qi.getDotLabel(), qj
-                    //        .getDotLabel(), qrip.getDotLabel());
-
                     StringBuilder lbl = new StringBuilder();
 
                     if (a.containsEdge(qi, qrip) && a.getEdge(qi, qrip).getLabel().length() > 0) {
@@ -122,19 +116,13 @@ public enum StateEliminator {
                         lbl.append(a.getEdge(qi,qj).getLabel());
                     }
 
-
-                    //LOGGER.debug("LBL {}", lbl);
-
                     if (lbl.length() > 0) {
                         trans.add(new Transition(qi, qj, Transition.Kind.MATCH, lbl));
                     }
                 }
             }
 
-
             a.removeVertex(qrip);
-
-            LOGGER.debug("#states:{}", a.vertexSet().size());
 
             trans.forEach(t -> {
                 if (a.containsEdge(t.getSource(), t.getTarget())) {
@@ -143,25 +131,20 @@ public enum StateEliminator {
                     a.addEdge(t);
                 }
             });
-
-            //LOGGER.debug("remove {}", qrip.getDotLabel());
-            //LOGGER.debug(a.toDot());
         }
 
-
         assert a.edgeSet().size() == 1;
-
-
-        //LOGGER.debug(a.toDot());
-
-        String ret = a.edgeSet().iterator().next().getLabel().toString();
-
-        //LOGGER.debug("RETURN {}", ret);
-
-        return ret;
-
+        return postProcess(a.edgeSet().iterator().next().getLabel().toString());
     }
 
+    private String postProcess(String s) {
+        // just a bit of cleanup to remove redundant empty transitions
+        return s.replaceAll("\\)\\(\\.\\{0(,0)?\\}\\)", ")")
+                .replaceAll("\\)\\.\\{0(,0)?\\}", ")")
+                .replaceAll("\\(\\.\\{0(,0)?\\}\\)\\(", "(")
+                .replaceAll("\\.\\{0(,0)?\\}\\(", "(")
+                .replaceAll("\\*\\(\\.\\{0(,0)?\\}\\)", "*");
+    }
 
     private Tuple<Transition,Transition> getMergeTrans(Gnfa a) {
         try {
@@ -179,9 +162,7 @@ public enum StateEliminator {
         }
     }
 
-
     public void handleTrivialCases(Gnfa a) {
-        LOGGER.debug("handleTrivialCases gnfa");
         Tuple<Transition, Transition> t;
         while((t = getMergeTrans(a)) != null) {
             Transition nt = new Transition(t.getFirst().getSource(), t
@@ -191,11 +172,6 @@ public enum StateEliminator {
 
 
             a.removeVertex(t.getFirst().getTarget());
-
-            LOGGER.debug("#state {}", a.vertexSet().size());
         }
-
     }
-
-
 }

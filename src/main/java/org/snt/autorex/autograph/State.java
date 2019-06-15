@@ -29,13 +29,11 @@ package org.snt.autorex.autograph;
 import java.math.BigInteger;
 
 public class State implements Cloneable {
-
     public enum Kind {
         NORMAL,
         START,
         ACCEPT
     }
-
 
     private Kind kind = Kind.NORMAL;
 
@@ -62,7 +60,6 @@ public class State implements Cloneable {
         return new State(this);
     }
 
-
     @Override
     public boolean equals(Object o) {
         if(!(o instanceof State))
@@ -71,14 +68,12 @@ public class State implements Cloneable {
         State s = (State)o;
 
         return s.kind == this.kind && s.id.equals(this.id);
-
     }
 
     @Override
     public int hashCode() {
         return this.id.hashCode();
     }
-
 
     public BigInteger getId() {
         return this.id;

@@ -75,8 +75,6 @@ public class FullTransition {
 
     public static int id = 0;
 
-
-
     public FullTransition(State src, Transition trans, State dest,
                           LabelTranslator ltrans) {
         this.src = src;
@@ -94,7 +92,6 @@ public class FullTransition {
         this.kind = Kind.MATCH;
         this.recentlyAdded = trans;
     }
-
 
     public void setIsEpsilon(boolean eps) {
         if(eps) {
@@ -115,7 +112,6 @@ public class FullTransition {
         return this.dest;
     }
 
-
     public void setSourceState(State src) {
         this.src = src;
     }
@@ -132,13 +128,10 @@ public class FullTransition {
         return this.recentlyAdded;
     }
 
-
     public void addTransition (Transition t) {
         this.trans.add(t);
         this.label = getTransitionLabel();
     }
-
-
 
     public String getTransitionLabel() {
 
@@ -163,7 +156,6 @@ public class FullTransition {
         return this.label;
     }
 
-
     public Kind getKind() {
         return this.kind;
     }
@@ -178,6 +170,4 @@ public class FullTransition {
         sb.append("==================================\n");
         return sb.toString();
     }
-
-
 }

@@ -53,7 +53,6 @@ public enum Classifier {
         BLACK
     }
 
-
     static class ClassificationIterator extends DepthFirstIterator<State,
             Transition> {
 
@@ -70,8 +69,6 @@ public enum Classifier {
         protected void encounterVertex(State vertex, Transition edge) {
             if(edge != null)
                 edge.setProp(Transition.Property.TREE);
-
-            LOGGER.debug("e {}", vertex.getDotLabel());
             dmap.put(vertex, timer++);
             cmap.put(vertex, Color.GRAY);
             super.encounterVertex(vertex,edge);
@@ -97,7 +94,6 @@ public enum Classifier {
         protected void finishVertex(State vertex) {
             cmap.put(vertex, Color.BLACK);
         }
-
     }
 
     /**
@@ -105,14 +101,10 @@ public enum Classifier {
      * @param g the Gnfa to analyze
      */
     public void classify(Gnfa g) {
-        LOGGER.debug("classify");
         ClassificationIterator iter = new ClassificationIterator(g);
         while(iter.hasNext())
             iter.next();
-
     }
-
-
 }
 
 

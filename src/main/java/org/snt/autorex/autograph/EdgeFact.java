@@ -29,7 +29,6 @@ package org.snt.autorex.autograph;
 import org.jgrapht.EdgeFactory;
 
 public class EdgeFact implements EdgeFactory<State,Transition> {
-
     public Transition createEdge(State v1, State v2) {
         return new Transition(v1, v2, Transition.Kind.MATCH);
     }

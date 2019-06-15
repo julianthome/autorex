@@ -41,7 +41,6 @@ import static org.snt.autorex.AutomatonTrans.Kind.*;
 
 public class TestAutomatonTrans {
 
-
     final static Logger LOGGER = LoggerFactory.getLogger(TestAutomatonTrans.class);
 
     // a custom label translator
@@ -54,7 +53,6 @@ public class TestAutomatonTrans {
             return super.getTransitionString(t);
         }
     }
-
 
     @Test
     public void testKind() {
@@ -98,9 +96,7 @@ public class TestAutomatonTrans {
         Assert.assertTrue(k.isLen());
         Assert.assertTrue(k.toString().equals("len"));
         Assert.assertTrue(KindFromString("len").equals(k));
-
     }
-
 
     @Test
     public void testConversion() {
@@ -123,9 +119,6 @@ public class TestAutomatonTrans {
         sfx.convertToSuffixAutomaton();
         len.convertToLenAutomaton();
 
-        LOGGER.debug(eps.auto.toDot());
-
-
         Assert.assertNotNull(substr);
         Assert.assertNotNull(ccas);
         Assert.assertNotNull(sfx);
@@ -142,7 +135,6 @@ public class TestAutomatonTrans {
                 Assert.assertTrue(substr.auto.run(sub));
 
                 if(!s.endsWith(sub)) {
-                    LOGGER.debug("sub {}", sub);
                     Assert.assertFalse(sfx.auto.run(sub));
                 } else {
                     Assert.assertTrue(sfx.auto.run(sub));
@@ -156,8 +148,6 @@ public class TestAutomatonTrans {
         }
 
         Assert.assertTrue(ccas.auto.run(s.toUpperCase()));
-
-
         AutomatonTrans csubstr = substr.clone();
         Assert.assertTrue(csubstr.equals(csubstr));
 
@@ -175,7 +165,5 @@ public class TestAutomatonTrans {
             String m = RandomStringUtils.randomAlphanumeric(s.length()+1, 200);
             Assert.assertFalse(len.auto.run(m));
         }
-
     }
-
 }

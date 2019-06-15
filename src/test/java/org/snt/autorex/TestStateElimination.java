@@ -50,28 +50,22 @@ public class TestStateElimination {
         }
     }
 
-
     private enum Op {
         CONCAT,
         UNION,
         ISECT
-    };
+    }
 
     private boolean compareRexp(String rexp) {
-        LOGGER.debug("TEST " + rexp);
         RegExp r0 = new RegExp(rexp);
         Automaton a0 = r0.toAutomaton();
         return compareRexpAutomaton(a0);
     }
 
     private boolean compareRexpAutomaton(Automaton a0) {
-        LOGGER.debug("old Automaton:" + a0.toDot());
-        LOGGER.debug("is det" + a0.isDeterministic());
         String s0 = Autorex.getRegexFromAutomaton(a0);
-        LOGGER.debug("Regexp 1 " + s0);
         RegExp r0new = new RegExp(s0);
         Automaton a0new = r0new.toAutomaton();
-        LOGGER.debug("new Automaton:" + a0new.toDot());
         return a0new.equals(a0);
     }
 
@@ -120,7 +114,6 @@ public class TestStateElimination {
     public void testLabelTranslator() {
         Automaton a = new RegExp("ab.*").toAutomaton();
         String s0 = Autorex.getRegexFromAutomaton(a, new Trans());
-        LOGGER.debug(s0);
     }
 
     @Test
@@ -140,12 +133,9 @@ public class TestStateElimination {
         Automaton c = new RegExp(".{0,5}").toAutomaton();
 
         Automaton d = a.union(b).intersection(c);
-
         String s0 = Autorex.getRegexFromAutomaton(d);
-        LOGGER.debug("Regex String: {}", s0);
         RegExp r0new = new RegExp(s0);
         Automaton a0new = r0new.toAutomaton();
         Assert.assertTrue(a0new.equals(d));
     }
-
 }

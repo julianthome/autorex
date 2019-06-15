@@ -89,7 +89,6 @@ public class AutomatonTrans {
             return this == LEN;
         }
         public boolean isSubstring() {return this == SUBSTRING;}
-
     }
 
     private Kind kind = Kind.NORMAL;
@@ -117,10 +116,9 @@ public class AutomatonTrans {
         this.ltrans = ltrans;
         this.auto = a.clone();
         this.init = this.auto.getInitialState();
-        prepare();
-        finalize();
+        this.prepare();
+        this.finish();
     }
-
 
     public AutomatonTrans(Automaton a) {
         this(a, new DefaultLabelTranslator());
@@ -133,7 +131,6 @@ public class AutomatonTrans {
     public AutomatonTrans(String rexp, LabelTranslator ltrans) {
         this(new RegExp(rexp).toAutomaton(),ltrans);
     }
-
 
     private void reset() {
         incoming.clear();
@@ -152,8 +149,6 @@ public class AutomatonTrans {
         }
     }
 
-
-
     private void prepare() {
         // get all transitions
         reset();
@@ -164,7 +159,6 @@ public class AutomatonTrans {
             }
         }
     }
-
 
     public void addTransitions(Collection<FullTransition> ft) {
 
@@ -276,10 +270,6 @@ public class AutomatonTrans {
                     Character.MAX_VALUE, t.getDest());
 
             State s = transitions.get(t);
-
-            LOGGER.debug("remove {}:{}", t.getMax(), t.getMax());
-
-
             s.getTransitions().remove(t);
             s.getTransitions().add(tnew);
         }
@@ -288,27 +278,25 @@ public class AutomatonTrans {
         auto.determinize();
         this.kind = Kind.LEN;
         this.prepare();
-        this.finalize();
+        this.finish();
     }
-
 
     protected void convertToSubstringAutomaton() {
         setAccepting();
         setEpsilon();
         this.kind = Kind.SUBSTRING;
         this.prepare();
-        this.finalize();
+        this.finish();
     }
 
     protected void convertToSuffixAutomaton() {
         setEpsilon();
         this.kind = Kind.SUFFIX;
         this.prepare();
-        this.finalize();
+        this.finish();
     }
 
-
-    public void finalize() {
+    public void finish() {
         stateId = 0;
         statenumber.clear();
         Set<State> visited = new HashSet<State>();
@@ -336,7 +324,6 @@ public class AutomatonTrans {
     void appendDot(StringBuilder sbuilder, FullTransition ft) {
         sbuilder.append(" -> ").append(
                 "n" + statenumber.get(ft.getTargetState())).append(" [label=\"");
-
 
         sbuilder.append(ft.getTransitionLabel());
 
@@ -368,7 +355,6 @@ public class AutomatonTrans {
             if (s.equals(auto.getInitialState())) {
                 auto.setInitialState(p);
                 assert auto.getInitialState() != null;
-                //LOGGER.info("INITIAL STATE");
             }
 
             for (Transition t : s.getTransitions()) {
@@ -395,7 +381,6 @@ public class AutomatonTrans {
             } else {
                 sbuilder.append(" [shape=circle,label=\"" + this.statenumber.get(state) + "\"];\n");
             }
-
         }
 
         for(FullTransition ft : transitions){
@@ -406,5 +391,4 @@ public class AutomatonTrans {
 
         return sbuilder.append("}\n").toString();
     }
-
 }

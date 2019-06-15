@@ -43,7 +43,6 @@ public class Gnfa extends AbstractGraph implements Cloneable {
     private State start;
     private State end;
 
-
     public Set<Transition> getIncomingEdgesOfKind(State n, Transition.Kind k) {
         return super.incomingEdgesOf(n).stream().filter(e -> e.getKind() ==
                 k).collect(Collectors.toSet());
@@ -64,13 +63,9 @@ public class Gnfa extends AbstractGraph implements Cloneable {
                 (Collectors.toSet());
     }
 
-
     public void addEdge(Transition e) {
-
-
         State src = e.getSource();
         State dst = e.getTarget();
-
         super.addVertex(src);
         super.addVertex(dst);
         super.addEdge(src,dst, e);
@@ -90,11 +85,9 @@ public class Gnfa extends AbstractGraph implements Cloneable {
         return start;
     }
 
-
     public State getEnd() {
         return end;
     }
-
 
     public String toDot() {
 
@@ -121,7 +114,6 @@ public class Gnfa extends AbstractGraph implements Cloneable {
             sb.append("\t" + n.getDotLabel() + " [label=\"" + n.getDotLabel() + "\"," +
                     "shape=\"" + shape + "\", color=\"" + color + "\"];\n");
         }
-
 
         for (Transition e : this.edgeSet())  {
 

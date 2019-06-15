@@ -35,7 +35,6 @@ import org.snt.autorex.autograph.Gnfa;
 import org.snt.autorex.autograph.State;
 import org.snt.autorex.autograph.Transition;
 
-
 public class TestClassification {
 
     final static Logger LOGGER = LoggerFactory.getLogger(TestClassification.class);
@@ -43,23 +42,10 @@ public class TestClassification {
     @Test
     public void testClassfication() {
         Automaton a = new RegExp("az+g(at|yg)").toAutomaton();
-
         Gnfa g = Converter.INSTANCE.getGnfaFromAutomaton(a);
-
         StateEliminator.INSTANCE.handleTrivialCases(g);
-
-
         TopologicalOrderIterator<State, Transition> topOrder =
                 new TopologicalOrderIterator(g);
-
-        while (topOrder.hasNext()) {
-            State next = topOrder.next();
-            LOGGER.debug(next.getDotLabel());
-        }
-
         Classifier.INSTANCE.classify(g);
-        LOGGER.debug(g.toDot());
-
     }
-
 }
