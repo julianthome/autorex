@@ -13,8 +13,7 @@ automaton*. Once a regular expression string has been converted into the
 `dk.brics` automaton representation, `dk.brics` does not offer the functionality
 to convert it back to a 
 regular expression String. This package provides tooling that converts
-a `dk.brics` result automaton, i.e., the automaton resulting from a sequence of
-automaton operations, back to a regular expression string.
+any `dk.brics` output automaton back to its regular expression string representation.
 
 # Status
 
