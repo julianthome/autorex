@@ -1,20 +1,20 @@
 # autorex
 
-With `autorex`, one can convert an automaton back into its regular expression
+With `autorex`, you can convert an automaton back into its regular expression
 string representation. The translation is based on the state-elimination
 algorithm which is neatly described in *Sipser, Michael.  Introduction to the
 Theory of Computation.  Vol. 2.  Boston: Thomson Course Technology, 2006,
 Chapter 1 (Starting from page 70)*.  The implementation is based on the
 [dk.brics](http://www.brics.dk/automaton/) automaton package.
 
-With `dk.brics`, one can apply automata operations such as concatenation,
+With `dk.brics`, you can apply automata operations such as concatenation,
 union, intersection, *etc.* on *input automata* to derive an *output
 automaton*. Once a regular expression string has been converted into the
-`dk.brics` automaton representation, it cannot be converted back to a String.
-However, in practice there might be cases where the output of the `dk.brics`
-automaton transformation is needed (e.g. to make the resulting regular
-expression human readable, or if you'd like to use the regular expression in
-another application). 
+`dk.brics` automaton representation, `dk.brics` does not offer the functionality
+to convert it back to a 
+regular expression String. This package provides tooling that converts
+a `dk.brics` result automaton, i.e., the automaton resulting from a sequence of
+automaton operations, back to a regular expression string.
 
 # Status
 
@@ -34,7 +34,7 @@ another application).
 
 # Maven Integration
 
-`autorex` is available on maven central. One can integrate it by using
+`autorex` is available on maven central. You can integrate it by using
 the following dependency in the `pom.xml` file. Note, that the maven releases
 do not necessarily contain the newest changes that are available in the
 repository. The maven releases are kept in sync with the tagged
